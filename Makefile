@@ -6,7 +6,7 @@ TARGET_FILE=compiler
 BASE_HEADERS= includes
 
 init: create compiler
-	tree /F > tree_files.txt
+	tree /A /F > tree_files.txt
 
 compiler: 
 	$(C_DEBUG) $(BASE_HEADERS)/main.c -o $(DIR_TARGET)\$(TARGET_FILE).exe

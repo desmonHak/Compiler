@@ -1,84 +1,84 @@
 Listado de rutas de carpetas para el volumen Windows
 El n£mero de serie del volumen es 56AF-0D29
 C:.
-³   .gitignore
-³   Makefile
-³   README.md
-³   tree_files.txt
-³   
-ÃÄÄÄ.vscode
-³       c_cpp_properties.json
-³       settings.json
-³       tasks.json
-³       
-ÃÄÄÄincludes
-³   ³   base.h
-³   ³   class_c.h
-³   ³   codigo.bh
-³   ³   compiler.c
-³   ³   compiler.h
-³   ³   debug_c.c
-³   ³   debug_c.h
-³   ³   error_c.c
-³   ³   error_c.h
-³   ³   lang.h
-³   ³   main.c
-³   ³   
-³   ÃÄÄÄcolors-C-C-plus-plus
-³   ³       .gitignore
-³   ³       colors.c
-³   ³       colors.h
-³   ³       example.c
-³   ³       example.exe
-³   ³       imagen.png
-³   ³       imagen1.png
-³   ³       LICENSE
-³   ³       README.md
-³   ³       
-³   ÃÄÄÄsintaxis
-³   ³       ast.c
-³   ³       ast.h
-³   ³       lexer.c
-³   ³       lexer.h
-³   ³       parser.c
-³   ³       parser.h
-³   ³       tokens.c
-³   ³       tokens.h
-³   ³       types.c
-³   ³       types.h
-³   ³       
-³   ÃÄÄÄstructs_data
-³   ³       list.c
-³   ³       list.h
-³   ³       list_demo.c
-³   ³       pruebas.c
-³   ³       strings.c
-³   ³       strings.h
-³   ³       
-³   ÃÄÄÄWL_lib
-³   ³       code.c
-³   ³       code.elf
-³   ³       code.exe
-³   ³       code1.c
-³   ³       README.md
-³   ³       WL_lib.c
-³   ³       WL_lib.h
-³   ³       
-³   ÀÄÄÄx86
-³       ³   assembly.h
-³       ³   instructions.h
-³       ³   regs.h
-³       ³   
-³       ÃÄÄÄ8086
-³       ³       asm.h
-³       ³       
-³       ÃÄÄÄamd64
-³       ³       asm.h
-³       ³       
-³       ÀÄÄÄi386
-³               asm.h
-³               
-ÀÄÄÄoutput
+|   .gitignore
+|   Makefile
+|   README.md
+|   tree_files.txt
+|   
++---.vscode
+|       c_cpp_properties.json
+|       settings.json
+|       tasks.json
+|       
++---includes
+|   |   base.h
+|   |   class_c.h
+|   |   codigo.bh
+|   |   compiler.c
+|   |   compiler.h
+|   |   debug_c.c
+|   |   debug_c.h
+|   |   error_c.c
+|   |   error_c.h
+|   |   lang.h
+|   |   main.c
+|   |   
+|   +---colors-C-C-plus-plus
+|   |       .gitignore
+|   |       colors.c
+|   |       colors.h
+|   |       example.c
+|   |       example.exe
+|   |       imagen.png
+|   |       imagen1.png
+|   |       LICENSE
+|   |       README.md
+|   |       
+|   +---sintaxis
+|   |       ast.c
+|   |       ast.h
+|   |       lexer.c
+|   |       lexer.h
+|   |       parser.c
+|   |       parser.h
+|   |       tokens.c
+|   |       tokens.h
+|   |       types.c
+|   |       types.h
+|   |       
+|   +---structs_data
+|   |       list.c
+|   |       list.h
+|   |       list_demo.c
+|   |       pruebas.c
+|   |       strings.c
+|   |       strings.h
+|   |       
+|   +---WL_lib
+|   |       code.c
+|   |       code.elf
+|   |       code.exe
+|   |       code1.c
+|   |       README.md
+|   |       WL_lib.c
+|   |       WL_lib.h
+|   |       
+|   \---x86
+|       |   assembly.h
+|       |   instructions.h
+|       |   regs.h
+|       |   
+|       +---8086
+|       |       asm.h
+|       |       
+|       +---amd64
+|       |       asm.h
+|       |       
+|       \---i386
+|               asm.h
+|               
+\---output
         codigo.bh
         compiler.exe
         
