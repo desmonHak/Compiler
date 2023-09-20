@@ -1,0 +1,73 @@
+Listado de rutas de carpetas para el volumen Windows
+El n£mero de serie del volumen es 773DADE0 56AF:0D29
+C:.
+³   Makefile
+³   tree_files.txt
+³   
+ÃÄÄÄ.vscode
+³       c_cpp_properties.json
+³       settings.json
+³       tasks.json
+³       
+ÃÄÄÄincludes
+³   ³   assembly.h
+³   ³   ast.c
+³   ³   ast.h
+³   ³   base.h
+³   ³   class_c.h
+³   ³   codigo.bh
+³   ³   compiler.c
+³   ³   compiler.h
+³   ³   debug_c.c
+³   ³   debug_c.h
+³   ³   error_c.c
+³   ³   error_c.h
+³   ³   lang.h
+³   ³   lexer.c
+³   ³   lexer.h
+³   ³   list.c
+³   ³   list.h
+³   ³   list_demo.c
+³   ³   main.c
+³   ³   main.exe
+³   ³   parser.c
+³   ³   parser.h
+³   ³   pruebas.c
+³   ³   pruebas.exe
+³   ³   pruebas.o
+³   ³   strings.c
+³   ³   strings.h
+³   ³   tokens.c
+³   ³   tokens.h
+³   ³   types.c
+³   ³   types.h
+³   ³   
+³   ÃÄÄÄcolors-C-C-plus-plus
+³   ³       .gitignore
+³   ³       colors.c
+³   ³       colors.h
+³   ³       example.c
+³   ³       example.exe
+³   ³       imagen.png
+³   ³       imagen1.png
+³   ³       LICENSE
+³   ³       README.md
+³   ³       
+³   ÀÄÄÄWL_lib
+³           code.c
+³           code.elf
+³           code.exe
+³           code1.c
+³           README.md
+³           WL_lib.c
+³           WL_lib.h
+³           
+ÀÄÄÄoutput
+        codigo.bh
+        compiler.exe
+        compiler.exe.id0
+        compiler.exe.id1
+        compiler.exe.id2
+        compiler.exe.nam
+        compiler.exe.til
+        
