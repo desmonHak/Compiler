@@ -182,5 +182,15 @@
         "class_c.h": "c",
         "*.h": "c",
         "new": "c"
-    }
+    },
+    "makefile.makefilePath": ".",
+    "makefile.makePath": "mingw32-make",
+    "makefile.loggingLevel": "Debug",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "c:\\Users\\mariana\\3D Objects\\Desmon\\Compiler-BH\\output",
+            "binaryPath": "c:\\Users\\mariana\\3D Objects\\Desmon\\Compiler-BH\\output\\compiler.exe",
+            "binaryArgs": []
+        }
+    ]
 }

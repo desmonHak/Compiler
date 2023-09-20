@@ -26,6 +26,7 @@ void compile_file(name_file name_file_open){
         return;
     }
 
+
     // Leer el archivo
     read_file(&soruce_code);
     puts("Error.");

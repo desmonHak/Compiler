@@ -65,9 +65,4 @@ C:.
 ÀÄÄÄoutput
         codigo.bh
         compiler.exe
-        compiler.exe.id0
-        compiler.exe.id1
-        compiler.exe.id2
-        compiler.exe.nam
-        compiler.exe.til
         

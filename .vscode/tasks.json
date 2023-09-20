@@ -6,6 +6,7 @@
             "command": "C:\\TDM-GCC-64\\bin\\gcc.exe",
             "args": [
                 "-fdiagnostics-color=always",
+                "-Wall",
                 "-g",
                 "${file}",
                 "-o",
@@ -24,5 +25,5 @@
             "detail": "Tarea generada por el depurador."
         }
     ],
-    "version": "2.0.0"
+    "version": "0.0.0"
 }
