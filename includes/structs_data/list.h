@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "debug_c.h"
+#include "../debug_c.h"
 
 #ifndef INIT_TYPE_FUNC_DBG
 #define INIT_TYPE_FUNC_DBG(type_return, name_func) "#{FG:lred} "#type_return" #{FG:cyan}"#name_func"#{FG:white}("

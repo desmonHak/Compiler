@@ -1,8 +1,6 @@
 #ifndef _PARSER_C_
 #define _PARSER_C_
 #include "parser.h"
-#include <stdio.h>
-#include "ast.h"
 
 parser_t *init_parser(lexer_t *lexer)
 {
@@ -222,7 +220,7 @@ ast_t *parser_parser_macro_syscall(parser_t *parser){
             parser_eat(parser, TOKEN_INT);                   // comemos el token int
 
             ast->data_almacenada.nombre_valor.name = registro;
-            printf("registro %s = %d\n", ast->data_almacenada.nombre_valor.name, ast->data_almacenada.nombre_valor.value.val64);
+            printf("registro %s = %llu\n", ast->data_almacenada.nombre_valor.name, ast->data_almacenada.nombre_valor.value.val64);
             
             // si el token siguiente al del valor es un token coma eliminarlo
             if(parser->token->type == TOKEN_COMMA) parser_eat(parser, TOKEN_COMMA);
@@ -325,7 +323,7 @@ void print_ast_recursive(ast_t* node, int indent, int is_last_child) {
             printf("Noop\n");
             break;
         case AST_VALUE:
-            printf("Value(%llu)\n", node->value);
+            printf("Value(%p)\n", node->value);
             break;
         // Agrega más casos según sea necesario para otros tipos de nodos
         default:

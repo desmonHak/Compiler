@@ -3,10 +3,10 @@
 
 #include <stdint.h>
 
-#include "list.h"
+#include "../structs_data/list.h"
 
 #if defined(__x86_64__) || defined(__i386__)
-#include "assembly.h"
+#include "../x86/assembly.h"
 #else 
 #error "Esta arquitectura no es x86"
 #endif
@@ -35,7 +35,7 @@ typedef struct name_value {
         uint32_t val32;   // para valores de 32bits
         uint64_t val64;   // para valores de 64bits
         void*    pointer; // para punteros
-    } value;             // valor asociado
+    } value;              // valor asociado
 
 } name_value;
 

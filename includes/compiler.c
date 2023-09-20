@@ -29,11 +29,11 @@ void compile_file(name_file name_file_open){
 
     // Leer el archivo
     read_file(&soruce_code);
-    puts("Error.");
+
     if (error_read_file(soruce_code)){
-        printf("Error al leer el archivo(%s) %d\n", name_file_open, soruce_code.data);
+        printf("Error al leer el archivo(%s) %s\n", name_file_open, soruce_code.data);
     } else soruce_code.data [get_size_file(soruce_code)] = 0x0;
-    puts("Error.");
+    
 	compile(soruce_code.data, get_size_file(soruce_code));
 	close_file(&soruce_code);
 }

@@ -31,9 +31,14 @@ static unsigned compiler_word_arch = 32;
 #endif
 
 #include "colors-C-C-plus-plus/colors.h"
+#include "structs_data/strings.h"
 #include "compiler.h"
-#include "strings.h"
+
 #include "lang.h"
+
+#define INIT_TYPE_FUNC_DBG(type_return, name_func) "#{FG:lred} "#type_return" #{FG:cyan}"#name_func"#{FG:white}("
+#define TYPE_DATA_DBG(type_data, name_arg) " #{FG:lyellow}"#type_data" #{FG:white} "name_arg", "
+#define END_TYPE_FUNC_DBG "#{FG:white}); #{FG:reset}"
 
 #ifdef _WIN32 // separador de ruta para sistemas no windows
     #define PATH_SEPARATOR_CHAR '\\'

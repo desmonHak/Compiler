@@ -6,7 +6,7 @@
 #include <string.h>
 
 #include "tokens.h"
-#include "WL_lib/WL_lib.h"
+#include "../WL_lib/WL_lib.h"
 
 #define MAX(a, b) a > b ? a : b
 #define MIN(a, b) a < b ? a : b

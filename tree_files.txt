@@ -1,7 +1,9 @@
 Listado de rutas de carpetas para el volumen Windows
 El n£mero de serie del volumen es 773DADE0 56AF:0D29
 C:.
+³   .gitignore
 ³   Makefile
+³   README.md
 ³   tree_files.txt
 ³   
 ÃÄÄÄ.vscode
@@ -10,9 +12,6 @@ C:.
 ³       tasks.json
 ³       
 ÃÄÄÄincludes
-³   ³   assembly.h
-³   ³   ast.c
-³   ³   ast.h
 ³   ³   base.h
 ³   ³   class_c.h
 ³   ³   codigo.bh
@@ -23,24 +22,7 @@ C:.
 ³   ³   error_c.c
 ³   ³   error_c.h
 ³   ³   lang.h
-³   ³   lexer.c
-³   ³   lexer.h
-³   ³   list.c
-³   ³   list.h
-³   ³   list_demo.c
 ³   ³   main.c
-³   ³   main.exe
-³   ³   parser.c
-³   ³   parser.h
-³   ³   pruebas.c
-³   ³   pruebas.exe
-³   ³   pruebas.o
-³   ³   strings.c
-³   ³   strings.h
-³   ³   tokens.c
-³   ³   tokens.h
-³   ³   types.c
-³   ³   types.h
 ³   ³   
 ³   ÃÄÄÄcolors-C-C-plus-plus
 ³   ³       .gitignore
@@ -53,15 +35,43 @@ C:.
 ³   ³       LICENSE
 ³   ³       README.md
 ³   ³       
-³   ÀÄÄÄWL_lib
-³           code.c
-³           code.elf
-³           code.exe
-³           code1.c
-³           README.md
-³           WL_lib.c
-³           WL_lib.h
-³           
+³   ÃÄÄÄsintaxis
+³   ³       ast.c
+³   ³       ast.h
+³   ³       lexer.c
+³   ³       lexer.h
+³   ³       parser.c
+³   ³       parser.h
+³   ³       tokens.c
+³   ³       tokens.h
+³   ³       types.c
+³   ³       types.h
+³   ³       
+³   ÃÄÄÄstructs_data
+³   ³       list.c
+³   ³       list.h
+³   ³       list_demo.c
+³   ³       pruebas.c
+³   ³       strings.c
+³   ³       strings.h
+³   ³       
+³   ÃÄÄÄWL_lib
+³   ³       code.c
+³   ³       code.elf
+³   ³       code.exe
+³   ³       code1.c
+³   ³       README.md
+³   ³       WL_lib.c
+³   ³       WL_lib.h
+³   ³       
+³   ÀÄÄÄx86
+³       ³   assembly.h
+³       ³   instructions.h
+³       ³   regs.h
+³       ³   
+³       ÃÄÄÄ8086
+³       ÃÄÄÄamd64
+³       ÀÄÄÄi386
 ÀÄÄÄoutput
         codigo.bh
         compiler.exe

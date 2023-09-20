@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "class_c.h"
+#include "../class_c.h"
 
 typedef class_c String_c {
     // metodos:

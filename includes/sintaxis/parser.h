@@ -6,15 +6,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "base.h"
-#include "debug_c.h"
+#include "../debug_c.h"
 #include "lexer.h"
 #include "ast.h"
 #include "types.h"
-
-#define INIT_TYPE_FUNC_DBG(type_return, name_func) "#{FG:lred} "#type_return" #{FG:cyan}"#name_func"#{FG:white}("
-#define TYPE_DATA_DBG(type_data, name_arg) " #{FG:lyellow}"#type_data" #{FG:white} "name_arg", "
-#define END_TYPE_FUNC_DBG "#{FG:white}); #{FG:reset}"
+#include "../structs_data/list.h"
 
 typedef struct PARSER_STRUCT {
     lexer_t *lexer;
