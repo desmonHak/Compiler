@@ -1,5 +1,5 @@
 Listado de rutas de carpetas para el volumen Windows
-El n£mero de serie del volumen es 773DADE0 56AF:0D29
+El n£mero de serie del volumen es 56AF-0D29
 C:.
 ³   .gitignore
 ³   Makefile
@@ -70,8 +70,14 @@ C:.
 ³       ³   regs.h
 ³       ³   
 ³       ÃÄÄÄ8086
+³       ³       asm.h
+³       ³       
 ³       ÃÄÄÄamd64
+³       ³       asm.h
+³       ³       
 ³       ÀÄÄÄi386
+³               asm.h
+³               
 ÀÄÄÄoutput
         codigo.bh
         compiler.exe
