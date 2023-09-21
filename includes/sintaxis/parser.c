@@ -328,6 +328,9 @@ void print_ast_recursive(ast_t* node, int indent, int is_last_child) {
 
     // Imprimir información sobre el nodo
     switch (node->type) {
+        case AST_INIT:
+            puts("Nodo de inicio");
+            break;
         case AST_COMPOUND:
             printf("Compound(%s)\n", node->name);
             break;
