@@ -116,7 +116,7 @@ token_t* lexer_next_token(lexer_t* lexer){
         //if (isdigit(lexer->c)) return lexer_advance_with(lexer, lexer_parser_number(lexer));
         if (isdigit(lexer->c)) return lexer_parser_number(lexer);
 
-        if (isalnum(lexer->c)) 
+        if (isalnum(lexer->c) != 0 ) 
             return lexer_advance_with(lexer, lexer_parser_id(lexer));
 
 
@@ -132,10 +132,28 @@ token_t* lexer_next_token(lexer_t* lexer){
             //if (isalnum (lexer_peek(lexer, 1))) return lexer_advance_with(lexer, init_token("#", TOKKEN_MACRO_DEFINE));
             //else printf("No se esperaba este caracter(lexer_peek): %c\n", lexer_peek(lexer, 1)); exit(1); break;
             // #syscall
-            if (isalnum (lexer_peek(lexer, 1)) && lexer_peek(lexer, 1) == (unsigned char)'s')      return lexer_advance_with_junp(lexer, init_token("#syscall", TOKKEN_MACRO_SYSCALL), strlen("#syscall"));
+            /*if (isalnum (lexer_peek(lexer, 1)) != 0 && lexer_peek(lexer, 1) == (unsigned char)'s')    {  
+                return lexer_advance_with_junp(lexer, init_token("#syscall", TOKKEN_MACRO_SYSCALL), 9); // avanza luego 9 posiciones
+            }
             // #define
-            else if (isalnum (lexer_peek(lexer, 1)) && lexer_peek(lexer, 1) == (unsigned char)'d') return lexer_advance_with_junp(lexer, init_token("#define", TOKKEN_MACRO_DEFINE), strlen("#define"));
+            else if (isalnum (lexer_peek(lexer, 1)) != 0 && lexer_peek(lexer, 1) == (unsigned char)'d') 
+                return lexer_advance_with_junp(lexer, init_token("#define", TOKKEN_MACRO_DEFINE), 8); // avanza luego 8 posiciones
+            else{puts("que podra ser");}*/
             
+            if (isalnum((int)lexer_peek(lexer, 1)) != 0){ 
+                
+                switch (lexer_peek(lexer, 1))
+                {
+                case 's':
+                    return lexer_advance_with_junp(lexer, init_token("#syscall", TOKKEN_MACRO_SYSCALL), 9); // avanza luego 9 posiciones
+                case 'd':
+                    return lexer_advance_with_junp(lexer, init_token("#define", TOKKEN_MACRO_DEFINE), 8); // avanza luego 8 posiciones
+                default:
+                    puts("que podra ser");
+                    return lexer_advance_current(lexer, TOKKEN_MACRO_DEFINE);
+                }
+            }
+
         case '(': return lexer_advance_current(lexer, TOKEN_LPAREN);
         case ')': return lexer_advance_current(lexer, TOKEN_RPAREN);
         case '[': return lexer_advance_current(lexer, TOKEN_LCORCHETES);

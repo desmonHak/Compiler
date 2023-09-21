@@ -38,7 +38,8 @@ void generate_three_values(
     unsigned int n1, unsigned int n2, unsigned int n3,
     unsigned int n4, unsigned int n5, unsigned int n6)
 {
-    if (x < 0 || x > 255)
+    // si es 0 o menor o igual que 255
+    if (x || x <= 255)
     {
         printf("El numero debe estar en el rango de 0 a 255.\n");
         return;

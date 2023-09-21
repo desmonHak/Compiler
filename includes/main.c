@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (do_help || (index == 0) && (opt == -1))
+	if (do_help || ((index == 0) && (opt == -1)))
 	{
 		printf_color(USAGE_STRING_ARGV "\n\t" HELP_STRING_ARGV "\n");
         printf_color("\t" VERSION_STRING_ARGV "\n");

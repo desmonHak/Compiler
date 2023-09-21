@@ -39,13 +39,13 @@ struct regs_amd64
     {
         uint16_t di;
         uint32_t edi;
-        uint64_t rdi
+        uint64_t rdi;
     };
     union
     {
         uint16_t si;
         uint32_t esi;
-        uint64_t rsi
+        uint64_t rsi;
     };
     union
     {

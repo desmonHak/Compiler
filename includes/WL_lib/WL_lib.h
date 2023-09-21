@@ -49,7 +49,7 @@ typedef enum mode
 } mode;
 
 #define OPEN_ERROR INVALID_HANDLE_VALUE
-#define OPEN_MODE_ERROR ERROR_INVALID_PARAMETER
+#define OPEN_MODE_ERROR INVALID_HANDLE_VALUE
 
 #elif __linux__
 #include <fcntl.h>

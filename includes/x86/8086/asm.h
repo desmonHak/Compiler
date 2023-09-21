@@ -46,7 +46,7 @@
 #define IOPL1        (1 << 12)
 #define IOPL2        (1 << 13)
 #define NT           (1 << 14)
-#define RESERBADO3   (1 << 15)
+#define RESERBADO4   (1 << 15)
 
 /**
  * A 16-bit general register.

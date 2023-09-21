@@ -23,6 +23,7 @@ bool error_read_file(MyFile my_file)
 bool error_mode_file(MyFile my_file)
 {
     if (my_file.archivo == OPEN_MODE_ERROR)
+        
         return true;
     else
         return false;
@@ -57,6 +58,8 @@ File open_f(name_file name_file_open, mode mode_open)
         dwShareMode = FILE_SHARE_READ | FILE_SHARE_WRITE;
         dwDesiredAccess = READ | WRITE;
         dwCreationDisposition = OPEN_ALWAYS;
+        //[[fallthrough]];
+        break;
     default:
         // permite acceso de lectura, escritura y eliminacion para otros procesos
         dwShareMode = FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE;

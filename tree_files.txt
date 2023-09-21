@@ -1,5 +1,5 @@
 Listado de rutas de carpetas para el volumen Windows
-El n£mero de serie del volumen es 56AF-0D29
+El n£mero de serie del volumen es 00650044 56AF:0D29
 C:.
 |   .gitignore
 |   Makefile
@@ -71,12 +71,15 @@ C:.
 |       |   
 |       +---8086
 |       |       asm.h
+|       |       main.asm
 |       |       
 |       +---amd64
 |       |       asm.h
+|       |       main.asm
 |       |       
 |       \---i386
 |               asm.h
+|               main.asm
 |               
 \---output
         codigo.bh

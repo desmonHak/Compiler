@@ -1,5 +1,5 @@
 NASM=nasm
-C=gcc -g -masm=intel -std=c17 -Wall
+C=gcc -g -masm=intel -std=c17 -Wall -Wextra -Wno-implicit-fallthrough -Wno-unused-variable -Wno-pointer-sign -Werror
 C_DEBUG=$(C) -D DEBUG_ENABLE
 DIR_TARGET=output
 TARGET_FILE=compiler

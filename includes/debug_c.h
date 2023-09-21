@@ -43,8 +43,6 @@ typedef struct {
         debug_print(Deb.level_c, Deb.message);     \
  } while (0)
 
-#define DEBUG_ENABLE
-
 #ifdef DEBUG_ENABLE
 #define debug_malloc(type, name_var, size) \
         name_var = (type*)malloc(size); \

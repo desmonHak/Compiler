@@ -169,7 +169,7 @@ ast_t *parser_parser_int(parser_t *parser){
     //if(lexer_next_token(parser->lexer)->type == TOKEN_RPAREN) parser_eat(parser, TOKEN_RPAREN);
 
     ast_t *ast = init_ast(AST_VALUE);
-    ast->value = mi_value;
+    ast->data_almacenada.nombre_valor.value.val64 = mi_value;
     list_push(ast->children, parser_parser_expr(parser));
     return ast;
 }
