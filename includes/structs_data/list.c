@@ -16,6 +16,7 @@ void list_push(list_c* list, void* item){
     /*
     if (list->items) list->items = (void**)calloc(1, list->itme_size);
     else list->items = (void**)realloc(list->items, (list->size * list->itme_size));
+    list->items[list->size - 1] = item;
     */
     if (list->items) {
         list->items = (void**)realloc(list->items, (list->size * sizeof(void*)));  // Allocate space for all items

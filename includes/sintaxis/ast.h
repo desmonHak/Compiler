@@ -21,6 +21,17 @@
 
 /*
  *
+ *  Registro 1 = eax, 2 = ebx, 3 = ecx, ...
+ * 
+ */
+static char* string_ID_regs[] = {
+    "1","2","3",
+    "4","5","6",
+    "7","8","9",  "0"
+};
+
+/*
+ *
  *  Asocia un nombre con un valor, una estructura
  *  o un puntero.
  *  Se puede usar para descibir variables + valor, 
@@ -42,6 +53,7 @@ typedef struct name_value {
 typedef struct  AST_STRUCT
 {
     enum {
+        AST_INIT,                // inicio del ast
         AST_COMPOUND,            // si es un compuesto
         AST_SYSCALL,             // para macros syscall
         //AST_FUNTION_DEFINITION,
@@ -60,7 +72,7 @@ typedef struct  AST_STRUCT
     int data_type;               // lugar donde almacenar el tipo
     
     union {
-        name_value nombre_valor; 
+        list_c* nombre_valor; // lista de name_value
         #if defined(__x86_64__) /* 64 bit detected */
         struct amd64_all_regs* regs;
         #elif defined(__i386__) /* 32 bit x86 detected */

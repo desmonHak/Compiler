@@ -7,11 +7,8 @@ void compile(char *src, Size_file src_size){
 	lexer_t* lexer = init_lexer(src, src_size);
     parser_t* parser = init_parser(lexer);
     print_tokents(init_lexer(src, src_size));
-    ast_t*   root = parser_parser(parser);
-	token_t* tok = 0;
-    printf("%s\n", token_to_str(parser->token));
-    
-
+    ast_t*   root = parser_parser(parser);  
+    print_ast(root);
 }
 void compile_file(name_file name_file_open){
     /*MyFile soruce_code;

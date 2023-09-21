@@ -181,7 +181,8 @@
         "hash_ntdll.h": "c",
         "class_c.h": "c",
         "*.h": "c",
-        "new": "c"
+        "new": "c",
+        "asm_compiler.C": "cpp"
     },
     "makefile.makefilePath": ".",
     "makefile.makePath": "mingw32-make",

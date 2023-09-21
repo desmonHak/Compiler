@@ -33,6 +33,7 @@ typedef struct TOKEN_STRING {
 
 
 token_t* init_token(unsigned char* value, unsigned short type);
+static const char* token_type_to_str(unsigned int type);
 /*
 // tokens del lenguaje
 typedef enum tokens_global {

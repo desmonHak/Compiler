@@ -169,7 +169,14 @@ ast_t *parser_parser_int(parser_t *parser){
     //if(lexer_next_token(parser->lexer)->type == TOKEN_RPAREN) parser_eat(parser, TOKEN_RPAREN);
 
     ast_t *ast = init_ast(AST_VALUE);
-    ast->data_almacenada.nombre_valor.value.val64 = mi_value;
+    ast->data_almacenada.nombre_valor = init_list(sizeof(name_value));
+
+    name_value *data;
+    debug_malloc(name_value, data, sizeof(name_value));
+    data->name  = NULL;
+    data->value.val64 = mi_value;
+    list_push(ast->data_almacenada.nombre_valor, data);
+
     list_push(ast->children, parser_parser_expr(parser));
     return ast;
 }
@@ -187,12 +194,12 @@ ast_t *parser_parser_macro_syscall(parser_t *parser){
     ast->name = malloc(sizeof(char) * strlen("syscall "));
     strcpy(ast->name, "syscall");
     
-    list_c* valores_syscall = init_list(sizeof(uint64_t));
     printf("Token analizado: %s\n",token_to_str(parser->token));
     if(parser->token->type == TOKEN_LCORCHETES){
         // comerser el corchete
         parser_eat(parser, TOKEN_LCORCHETES);
         // si el valor contenido entre los corchetes empieza por el nombre de un registro
+        ast->data_almacenada.nombre_valor = init_list(sizeof(name_value));
         while(parser->token->type != TOKEN_RCORCHETES){
             // obetenemos el registro
             unsigned char *registro = parser->token->value;
@@ -215,13 +222,17 @@ ast_t *parser_parser_macro_syscall(parser_t *parser){
             parser_eat(parser, TOKEN_REGISTRO);     // eliminamos el token del registro
             parser_eat(parser, TOKEN_ASIGNACION);   // eliminamos el simbolo de igual
 
+            name_value *data;
+            debug_malloc(name_value, data, sizeof(name_value));
+            
+
             // obtenemos el valor entero y lo asociamos con el registroo
-            ast->data_almacenada.nombre_valor.value.val64 = atoll(parser->token->value); 
+            data->value.val64 = atoll(parser->token->value); 
             parser_eat(parser, TOKEN_INT);                   // comemos el token int
 
-            ast->data_almacenada.nombre_valor.name = registro;
-            printf("registro %s = %llu\n", ast->data_almacenada.nombre_valor.name, ast->data_almacenada.nombre_valor.value.val64);
-            
+            data->name = registro;
+            printf("registro %s = %llu\n", data->name, data->value.val64);
+            list_push(ast->data_almacenada.nombre_valor, data);
             // si el token siguiente al del valor es un token coma eliminarlo
             if(parser->token->type == TOKEN_COMMA) parser_eat(parser, TOKEN_COMMA);
         }
@@ -229,17 +240,24 @@ ast_t *parser_parser_macro_syscall(parser_t *parser){
     } else if(parser->token->type == TOKEN_LPAREN){
         // comerser el parentesis
         parser_eat(parser, TOKEN_LPAREN);
-
+        unsigned char counter = 0; //contador de registros
+        ast->data_almacenada.nombre_valor = init_list(sizeof(name_value));
         while(parser->token->type != TOKEN_RPAREN){ // mientras no sea el parentesis final
 
             if (parser->token->type == TOKEN_INT){  // si el inicio del parentesis es un entero
                 // si el valor contenido entre los parentesis empieza por un numero
-
+                
                 // guardar los valores obtenidos en un ast syscall con los registros:
                 if (compiler_word_arch == 64){
                     // para 64 bits
-                    ast->data_almacenada.nombre_valor.name = "aaa";
-                    ast->data_almacenada.nombre_valor.value.val64 = atoll(parser->token->value); 
+                    name_value *data;
+                    debug_malloc(name_value, data, sizeof(name_value));
+                    data->value.val64 = atoll(parser->token->value); 
+                    data->name = string_ID_regs[counter]; counter++;
+                    list_push(ast->data_almacenada.nombre_valor, data);
+
+                    printf("registro numero %s -> value = %llu\n", data->name, data->value.val64);
+
                     if (parser->token->type == TOKEN_INT)
                         parser_eat(parser, TOKEN_INT);
                     else puts("[eror sintaxis] falta un numero");
@@ -315,6 +333,11 @@ void print_ast_recursive(ast_t* node, int indent, int is_last_child) {
             break;
         case AST_SYSCALL:
             printf("Syscall(%s)\n", node->name);
+            printf("pointer regs -> %p, size list: %lld\n", node->data_almacenada.regs, node->data_almacenada.nombre_valor->size);
+            for(unsigned char i = 0; i < node->data_almacenada.nombre_valor->size; i++){
+                name_value* values = (name_value*)(node->data_almacenada.nombre_valor->items[i]);
+                printf("[%d] %s = %llu\n",i, values->name, values->value.val64);
+            }
             break;
         case AST_ASSIGNMENT:
             printf("Assignment: %s\n", node->name);
@@ -358,8 +381,41 @@ void print_ast(ast_t* root) {
         return;
     }
 
-    printf("Abstract Syntax Tree:\n");
+    printf("Abstract Syntax Tree(size: %zu): \n", root->children->size);
     print_ast_recursive(root, 0, 1); // El último hijo es verdadero al principio
+    /*ast_t* child_ast;
+    for (unsigned int i = 0; i < root->children->size; i++) {
+        child_ast = (ast_t*)root->children->items[i];
+        switch (root->type) {
+            case AST_COMPOUND:
+                printf("Compound(%s)\n", child_ast->name);
+                break;
+            case AST_SYSCALL:
+                printf("Syscall(%s)\n", child_ast->name);
+                break;
+            case AST_ASSIGNMENT:
+                printf("Assignment: %s\n", child_ast->name);
+                break;
+            case AST_VARIABLE:
+                printf("Variable: %s\n", child_ast->name);
+                break;
+            case AST_STATEMENT:
+                printf("Statement\n");
+                break;
+            case AST_NOOP:
+                printf("Noop\n");
+                break;
+            case AST_VALUE:
+                printf("Value(%p)\n", child_ast->value);
+                break;
+            // Agrega más casos según sea necesario para otros tipos de nodos
+            default:
+                printf("Unknown Node Type\n");
+        }
+        if(child_ast->children != NULL)
+            child_ast = (ast_t*)child_ast->children->items[0];
+        else break;
+    }*/
 }
 
 ast_t *parser_parser_expr(parser_t *parser)
@@ -380,9 +436,9 @@ ast_t *parser_parser_expr(parser_t *parser)
     {
     case TOKEN_ID:              return parser_parser_id(parser);
     //case TOKEN_LPAREN:          return parser_parser_list(parser);
-    case TOKEN_RPAREN:           
+    /*case TOKEN_RPAREN:           
         parser_eat(parser, TOKEN_RPAREN);
-        return init_ast(AST_NOOP);
+        return init_ast(AST_NOOP);*/
     case TOKKEN_MACRO_SYSCALL:  return parser_parser_macro_syscall(parser);
     case TOKEN_INT:             return parser_parser_int(parser);
     //case TOKEN_COMMA:           return init_ast(AST_NOOP);
@@ -401,17 +457,14 @@ ast_t *parser_parser_compound(parser_t *parser)
 		END_TYPE_FUNC_DBG, parser \
 	);
     #endif
-    ast_t *compound = init_ast(AST_COMPOUND);
-
+    ast_t *compound = init_ast(AST_INIT);
     while (parser->token->type != TOKEN_EOF)
     {
-        print_ast_recursive(compound, 0, 1);
-
-
+        //print_ast_recursive(compound, 0, 1);
         list_push(compound->children, parser_parser_expr(parser));
     }
 
-    return init_ast(AST_NOOP);
+    return compound;
 }
 
 ast_t *parser_parser(parser_t *parser)

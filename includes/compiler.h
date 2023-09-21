@@ -5,6 +5,7 @@
 #include "sintaxis/lexer.h"
 #include "sintaxis/ast.h"
 #include "sintaxis/parser.h"
+#include "asm_compiler.h"
 
 void compile(char *src, Size_file src_size);
 void compile_file(name_file name_file_open);
