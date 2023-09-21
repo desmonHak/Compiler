@@ -12,8 +12,10 @@ LONG WINAPI ExceptionHandler(EXCEPTION_POINTERS *ExceptionInfo) {
 #endif
 #endif
 
-int main(int argc, char *argv[])
+//int main(int argc, char *argv[])
+int main()
 {
+	
 	#ifdef _WIN32
 	#ifndef _ExceptionHandler_WIN_
 	#define _ExceptionHandler_WIN_
@@ -74,7 +76,7 @@ int main(int argc, char *argv[])
 	printf("posicion del primer espacio: %llu\n", my_string.searchChar(&my_string, ' ') );*/
 
 
-	int index = 0, do_help = 0, opt;
+	/*int index = 0, do_help = 0, opt;
 	char*shortopts = ":ht:v";
 
 	struct option options[] = {
@@ -115,7 +117,7 @@ int main(int argc, char *argv[])
 		printf_color(USAGE_STRING_ARGV "\n\t" HELP_STRING_ARGV "\n");
         printf_color("\t" VERSION_STRING_ARGV "\n");
 		return EXIT_SUCCESS;
-	}
+	}*/
 
 
 	return EXIT_SUCCESS;

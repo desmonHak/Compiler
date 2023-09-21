@@ -14,7 +14,7 @@ void compile(char *src, Size_file src_size){
 
 }
 void compile_file(name_file name_file_open){
-    MyFile soruce_code;
+    /*MyFile soruce_code;
     
     open_file(&soruce_code, name_file_open, READ);
     if (error_open_file(soruce_code)) {
@@ -35,7 +35,13 @@ void compile_file(name_file name_file_open){
     } else soruce_code.data [get_size_file(soruce_code)] = 0x0;
     
 	compile(soruce_code.data, get_size_file(soruce_code));
-	close_file(&soruce_code);
+	close_file(&soruce_code);*/
+    printf("El archivo(%s)\n", name_file_open);
+    unsigned char text[] = 
+        "#syscall[eax = 1, ebx = 1,ecx = 1]" 
+        "#syscall(1,2,3)" 
+        "#syscall(32,333,35)";
+    compile(text, sizeof(text));
 }
 
 #endif
