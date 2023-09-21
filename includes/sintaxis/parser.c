@@ -186,9 +186,9 @@ ast_t *parser_parser_macro_syscall(parser_t *parser){
     ast_t *ast = init_ast(AST_SYSCALL);
     ast->name = malloc(sizeof(char) * strlen("syscall "));
     strcpy(ast->name, "syscall");
-
+    
     list_c* valores_syscall = init_list(sizeof(uint64_t));
-
+    printf("Token analizado: %s\n",token_to_str(parser->token));
     if(parser->token->type == TOKEN_LCORCHETES){
         // comerser el corchete
         parser_eat(parser, TOKEN_LCORCHETES);
@@ -240,8 +240,14 @@ ast_t *parser_parser_macro_syscall(parser_t *parser){
                     // para 64 bits
                     ast->data_almacenada.nombre_valor.name = "aaa";
                     ast->data_almacenada.nombre_valor.value.val64 = atoll(parser->token->value); 
-                    parser_eat(parser, TOKEN_INT);
-                    parser_eat(parser, TOKEN_COMMA);
+                    if (parser->token->type == TOKEN_INT)
+                        parser_eat(parser, TOKEN_INT);
+                    else puts("[eror sintaxis] falta un numero");
+                    if (parser->token->type == TOKEN_COMMA)
+                        parser_eat(parser, TOKEN_COMMA);
+                    else {// se encontro el ultimo numero de la macro, el cual no tiene coma 
+                        puts("final de la macro"); 
+                    }
                 } else if (compiler_word_arch == 32){
                     // para 32 bits
                 } else if (compiler_word_arch == 16){

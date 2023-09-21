@@ -39,7 +39,7 @@ void compile_file(name_file name_file_open){
     printf("El archivo(%s)\n", name_file_open);
     unsigned char text[] = 
         "#syscall[eax = 1, ebx = 1,ecx = 1]" 
-        "#syscall(1,2,3)" 
+        "#syscall(1,2,3, )" 
         "#syscall(32,333,35)";
     compile(text, sizeof(text));
 }

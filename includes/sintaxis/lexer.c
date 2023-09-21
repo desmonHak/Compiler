@@ -145,9 +145,9 @@ token_t* lexer_next_token(lexer_t* lexer){
                 switch (lexer_peek(lexer, 1))
                 {
                 case 's':
-                    return lexer_advance_with_junp(lexer, init_token("#syscall", TOKKEN_MACRO_SYSCALL), 9); // avanza luego 9 posiciones
+                    return lexer_advance_with_junp(lexer, init_token("#syscall", TOKKEN_MACRO_SYSCALL), 8); // avanza luego 9 posiciones
                 case 'd':
-                    return lexer_advance_with_junp(lexer, init_token("#define", TOKKEN_MACRO_DEFINE), 8); // avanza luego 8 posiciones
+                    return lexer_advance_with_junp(lexer, init_token("#define", TOKKEN_MACRO_DEFINE), 7); // avanza luego 8 posiciones
                 default:
                     puts("que podra ser");
                     return lexer_advance_current(lexer, TOKKEN_MACRO_DEFINE);
