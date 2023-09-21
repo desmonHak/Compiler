@@ -1,1 +1,3 @@
-./output/compiler.exe
+*.exe
+*.elf
+*.o

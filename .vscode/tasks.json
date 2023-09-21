@@ -6,8 +6,15 @@
             "command": "C:\\TDM-GCC-64\\bin\\gcc.exe",
             "args": [
                 "-fdiagnostics-color=always",
+                "-D DEBUG_ENABLE",
+                "-masm=intel",
+                "-std=c17",
                 "-Wall",
-                "-g",
+                "-Wextra",
+                "-Wno-implicit-fallthrough",
+                "-Wno-unused-variable",
+                "-Wno-pointer-sign -Werror",
+                "-ggdb",
                 "${file}",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
@@ -25,5 +32,5 @@
             "detail": "Tarea generada por el depurador."
         }
     ],
-    "version": "0.0.0"
+    "version": "2.0.0"
 }

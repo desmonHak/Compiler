@@ -2,11 +2,28 @@
 #define __DEBUG_C__
 #include "debug_c.h"
 
+#ifdef _WIN32
+#ifndef _ExceptionHandler_WIN_
+#define _ExceptionHandler_WIN_
+LONG WINAPI ExceptionHandler(EXCEPTION_POINTERS *ExceptionInfo) {
+    printf("Se ha producido una excepción (código %lx) en la dirección %p\n",
+        ExceptionInfo->ExceptionRecord->ExceptionCode,
+        ExceptionInfo->ExceptionRecord->ExceptionAddress);
+    return EXCEPTION_EXECUTE_HANDLER; // Manejar la excepción
+}
+#endif
+#endif
+
 void __attribute__((constructor)) __constructor_debug_c__(){
     //debug_set_log_file("debug_log.txt");
     //open_file(&Log_debug_file, NAME_DEFAULT_LOG_DEBUG, READ_WRITE );
+    #ifdef _WIN32
+    #ifndef _ExceptionHandler_WIN_
+    SetUnhandledExceptionFilter(ExceptionHandler);
+    #endif
+    #endif
     DEBUG_PRINT(DEBUG_LEVEL_INFO, "#{FG:white}[#{FG:red}DEBUG INIT#{FG:white}]");
-
+    
     /*if (Log_debug_file.archivo == OPEN_ERROR) {
         printf("Error al abrir el archivo " NAME_DEFAULT_LOG_DEBUG "\n");
         return 1;

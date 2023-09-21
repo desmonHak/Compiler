@@ -1,6 +1,7 @@
 NASM=nasm
-C=gcc -g -masm=intel -std=c17 -Wall -Wextra -Wno-implicit-fallthrough -Wno-unused-variable -Wno-pointer-sign -Werror
-C_DEBUG=$(C) -D DEBUG_ENABLE
+LEVEL_OPTIMIZACION=3
+C=gcc -O$(LEVEL_OPTIMIZACION) -fdiagnostics-color=always -masm=intel -std=c17 -Wall -Wextra -Wno-implicit-fallthrough -Wno-unused-variable -Wno-pointer-sign -Werror
+C_DEBUG=$(C) -D DEBUG_ENABLE -ggdb
 DIR_TARGET=output
 TARGET_FILE=compiler
 BASE_HEADERS= includes

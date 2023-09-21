@@ -1,8 +1,25 @@
 #include "base.h"
 
+#ifdef _WIN32
+#ifndef _ExceptionHandler_WIN_
+#define _ExceptionHandler_WIN_
+LONG WINAPI ExceptionHandler(EXCEPTION_POINTERS *ExceptionInfo) {
+    printf("Se ha producido una excepción (código %lx) en la dirección %p\n",
+        ExceptionInfo->ExceptionRecord->ExceptionCode,
+        ExceptionInfo->ExceptionRecord->ExceptionAddress);
+    return EXCEPTION_EXECUTE_HANDLER; // Manejar la excepción
+}
+#endif
+#endif
 
 int main(int argc, char *argv[])
 {
+	#ifdef _WIN32
+	#ifndef _ExceptionHandler_WIN_
+	#define _ExceptionHandler_WIN_
+	SetUnhandledExceptionFilter(ExceptionHandler);
+	#endif
+	#endif
 
 	/*NewObject_String_c(source_code);
 	MyFile mi_archivo1;

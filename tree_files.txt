@@ -1,5 +1,5 @@
 Listado de rutas de carpetas para el volumen Windows
-El n£mero de serie del volumen es 00650044 56AF:0D29
+El n£mero de serie del volumen es 773DADE0 56AF:0D29
 C:.
 |   .gitignore
 |   Makefile
@@ -28,12 +28,7 @@ C:.
 |   |       .gitignore
 |   |       colors.c
 |   |       colors.h
-|   |       example.c
-|   |       example.exe
-|   |       imagen.png
-|   |       imagen1.png
 |   |       LICENSE
-|   |       README.md
 |   |       
 |   +---sintaxis
 |   |       ast.c
@@ -56,10 +51,6 @@ C:.
 |   |       strings.h
 |   |       
 |   +---WL_lib
-|   |       code.c
-|   |       code.elf
-|   |       code.exe
-|   |       code1.c
 |   |       README.md
 |   |       WL_lib.c
 |   |       WL_lib.h
