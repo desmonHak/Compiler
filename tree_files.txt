@@ -26,6 +26,7 @@ C:.
 |   |   lang.h
 |   |   main.c
 |   |   
+|   +---arm
 |   +---colors-C-C-plus-plus
 |   |       .gitignore
 |   |       colors.c
@@ -76,6 +77,16 @@ C:.
 |               instructions.h
 |               main.asm
 |               
++---lib_native_nasm
+|   +---arm
+|   \---x86
+|           base.asm
+|           linux32.asm
+|           linux64.asm
+|           py.py
+|           windows32.asm
+|           windows64.asm
+|           
 \---output
         codigo.bh
         compiler.exe
