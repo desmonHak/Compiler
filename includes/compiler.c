@@ -4,11 +4,12 @@
 
 void compile(char *src, Size_file src_size){
     puts("Compilando...");
-	lexer_t* lexer = init_lexer(src, src_size);
-    parser_t* parser = init_parser(lexer);
+	lexer_t*    lexer  = init_lexer(src, src_size);
+    parser_t*   parser = init_parser(lexer);
     print_tokents(init_lexer(src, src_size));
-    ast_t*   root = parser_parser(parser);  
+    ast_t*      root  = parser_parser(parser);  
     print_ast(root);
+    convert_assembly(root);
 }
 void compile_file(name_file name_file_open){
     /*MyFile soruce_code;
@@ -35,7 +36,7 @@ void compile_file(name_file name_file_open){
 	close_file(&soruce_code);*/
     printf("El archivo(%s)\n", name_file_open);
     unsigned char text[] = 
-        "#syscall[eax = 1, ebx = 1,ecx = 1]" 
+        "#syscall[eax = 1, ebx = 2,ecx = 3]" 
         "#syscall(1,2,3, )" 
         "#syscall(32,333,35)";
     compile(text, sizeof(text));

@@ -8,5 +8,7 @@
 
 #include "sintaxis/ast.h"
 
+#include "x86/assembly.h"
+
 #include "asm_compiler.c"
 #endif

@@ -12,9 +12,9 @@
 // ---
 
 #if defined(__x86_64__) /* 64 bit detected */
-static unsigned compiler_word_arch = 64;
+static const unsigned compiler_word_arch = 64;
 #elif defined(__i386__) /* 32 bit x86 detected */
-static unsigned compiler_word_arch = 32;
+static const unsigned compiler_word_arch = 32;
 #endif
 
 #include <stdio.h>

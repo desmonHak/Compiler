@@ -24,12 +24,25 @@
  *  Registro 1 = eax, 2 = ebx, 3 = ecx, ...
  * 
  */
+#if defined(__x86_64__) /* 64 bit detected */
+static char* string_ID_regs[] = {
+    "rax","rbx","rcx",
+    "rdx","rsi","rsi",
+    "7","8","9",  "0"
+};
+#elif defined(__i386__) /* 32 bit x86 detected */
+static char* string_ID_regs[] = {
+    "eax","ebx","ecx",
+    "edx","esi","esi",
+    "7","8","9",  "0"
+};
+#else
 static char* string_ID_regs[] = {
     "1","2","3",
     "4","5","6",
     "7","8","9",  "0"
 };
-
+#endif
 /*
  *
  *  Asocia un nombre con un valor, una estructura

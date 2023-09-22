@@ -246,35 +246,38 @@ ast_t *parser_parser_macro_syscall(parser_t *parser){
 
             if (parser->token->type == TOKEN_INT){  // si el inicio del parentesis es un entero
                 // si el valor contenido entre los parentesis empieza por un numero
-                
+                name_value *data;
+                debug_malloc(name_value, data, sizeof(name_value));
+
                 // guardar los valores obtenidos en un ast syscall con los registros:
                 if (compiler_word_arch == 64){
                     // para 64 bits
-                    name_value *data;
-                    debug_malloc(name_value, data, sizeof(name_value));
                     data->value.val64 = atoll(parser->token->value); 
-                    data->name = string_ID_regs[counter]; counter++;
-                    list_push(ast->data_almacenada.nombre_valor, data);
-
-                    printf("registro numero %s -> value = %llu\n", data->name, data->value.val64);
-
-                    if (parser->token->type == TOKEN_INT)
-                        parser_eat(parser, TOKEN_INT);
-                    else puts("[eror sintaxis] falta un numero");
-                    if (parser->token->type == TOKEN_COMMA)
-                        parser_eat(parser, TOKEN_COMMA);
-                    else {// se encontro el ultimo numero de la macro, el cual no tiene coma 
-                        puts("final de la macro"); 
-                    }
+                    data->name = string_ID_regs_amd64[counter]; counter++;
                 } else if (compiler_word_arch == 32){
                     // para 32 bits
+                    data->value.val32 = atol(parser->token->value); 
+                    data->name = string_ID_regs_i386[counter]; counter++;
                 } else if (compiler_word_arch == 16){
                     // para 16 bits
+                    data->value.val16 = atoi(parser->token->value); 
+                    data->name = string_ID_regs_8086[counter]; counter++;
                 }else {
                     printf("[parser_parser_macro_syscall] Este size de palabra no se tenia contemplado: %d\n", compiler_word_arch);
                     exit(1);
                 }
-                
+                list_push(ast->data_almacenada.nombre_valor, data);
+                printf("registro numero %s -> value = %llu\n", data->name, data->value.val64);
+
+                if (parser->token->type == TOKEN_INT)
+                    parser_eat(parser, TOKEN_INT);
+                else puts("[eror sintaxis] falta un numero");
+                if (parser->token->type == TOKEN_COMMA)
+                    parser_eat(parser, TOKEN_COMMA);
+                else {// se encontro el ultimo numero de la macro, el cual no tiene coma 
+                    puts("final de la macro"); 
+                }
+
             } else {
                 printf_color("#{FG:lwhite}[#{FG:lred}Sintax error#{FG:lwhite}]#{FG:reset} : en #{FG:lred}%d#{FG:reset}, No es un valor entero -> #{FG:lyellow}%s#{FG:reset}\n", parser->lexer->i, parser->token->value);
                 exit(1);
@@ -339,7 +342,15 @@ void print_ast_recursive(ast_t* node, int indent, int is_last_child) {
             printf("pointer regs -> %p, size list: %lld\n", node->data_almacenada.regs, node->data_almacenada.nombre_valor->size);
             for(unsigned char i = 0; i < node->data_almacenada.nombre_valor->size; i++){
                 name_value* values = (name_value*)(node->data_almacenada.nombre_valor->items[i]);
-                printf("[%d] %s = %llu\n",i, values->name, values->value.val64);
+                if (compiler_word_arch == 64){
+                    printf("[%d] %s = %llu\n",i, values->name, values->value.val64);
+                } else if (compiler_word_arch == 32){
+                    printf("[%d] %s = %u\n",i, values->name, values->value.val32);
+                }else if (compiler_word_arch == 16){
+                    printf("[%d] %s = %hu\n",i, values->name, values->value.val16);
+                } else {
+                    puts("wtf");
+                }
             }
             break;
         case AST_ASSIGNMENT:
