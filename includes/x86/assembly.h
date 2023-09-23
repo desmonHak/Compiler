@@ -21,5 +21,8 @@ struct segoff
 } __attribute__((packed));
 typedef struct segoff segoff_t;
 
+#define ASM_MOV(source, destino) "mov " source ", " destino
+#define ASM_INTERRUPCION(valor)  "int " valor
+#define ASM_INTERRUPCION_SYSCALL()  "syscall"
 
 #endif

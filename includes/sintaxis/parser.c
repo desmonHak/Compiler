@@ -346,7 +346,7 @@ void print_ast_recursive(ast_t* node, int indent, int is_last_child) {
                     printf("[%d] %s = %llu\n",i, values->name, values->value.val64);
                 } else if (compiler_word_arch == 32){
                     printf("[%d] %s = %u\n",i, values->name, values->value.val32);
-                }else if (compiler_word_arch == 16){
+                } else if (compiler_word_arch == 16){
                     printf("[%d] %s = %hu\n",i, values->name, values->value.val16);
                 } else {
                     puts("wtf");
