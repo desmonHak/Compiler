@@ -15,7 +15,7 @@
 %define sys_mknod       0x0e     ; sys_mknod    0x0e    const char __user *filename     umode_t mode    unsigned dev    -     fs/namei.c:3785
 %define sys_chmod       0x0f     ; sys_chmod    0x0f    const char __user *filename     umode_t mode    -       -       -     fs/open.c:575
 %define sys_lchown16    0x10     ; sys_lchown16 0x10    const char __user *filename     old_uid_t user  old_gid_t group -     kernel/uid16.c:26
-%define not implemented 0x11     ; not implemented      0x11    -       -       -       -       -       :
+;%define not implemented 0x11     ; not implemented      0x11    -       -       -       -       -       :
 %define sys_stat        0x12     ; sys_stat     0x12    const char __user *filename     struct __old_kernel_stat __user *statbuf       -       -       -       fs/stat.c:244
 %define sys_lseek       0x13     ; sys_lseek    0x13    unsigned int fd off_t offset    unsigned int whence     -       -     fs/read_write.c:304
 %define sys_getpid      0x14     ; sys_getpid   0x14    -       -       -       -       -       kernel/sys.c:838
@@ -29,11 +29,11 @@
 %define sys_fstat       0x1c     ; sys_fstat    0x1c    unsigned int fd struct __old_kernel_stat __user *statbuf        -     fs/stat.c:270
 %define sys_pause       0x1d     ; sys_pause    0x1d    -       -       -       -       -       kernel/signal.c:3618
 %define sys_utime       0x1e     ; sys_utime    0x1e    char __user *filename   struct utimbuf __user *times    -       -     fs/utimes.c:24
-%define not implemented 0x1f     ; not implemented      0x1f    -       -       -       -       -       :
-%define not implemented 0x20     ; not implemented      0x20    -       -       -       -       -       :
+;%define not implemented 0x1f     ; not implemented      0x1f    -       -       -       -       -       :
+;%define not implemented 0x20     ; not implemented      0x20    -       -       -       -       -       :
 %define sys_access      0x21     ; sys_access   0x21    const char __user *filename     int mode        -       -       -     fs/open.c:429
 %define sys_nice        0x22     ; sys_nice     0x22    int increment   -       -       -       -       kernel/sched/core.c:3852
-%define not implemented 0x23     ; not implemented      0x23    -       -       -       -       -       :
+;%define not implemented 0x23     ; not implemented      0x23    -       -       -       -       -       :
 %define sys_sync        0x24     ; sys_sync     0x24    -       -       -       -       -       fs/sync.c:108
 %define sys_kill        0x25     ; sys_kill     0x25    pid_t pid       int sig -       -       -       kernel/signal.c:2953
 %define sys_rename      0x26     ; sys_rename   0x26    const char __user *oldname      const char __user *newname      -     fs/namei.c:4642
@@ -42,7 +42,7 @@
 %define sys_dup 0x29     ; sys_dup      0x29    unsigned int fildes     -       -       -       -       fs/file.c:925
 %define sys_pipe        0x2a     ; sys_pipe     0x2a    int __user *fildes      -       -       -       -       fs/pipe.c:861
 %define sys_times       0x2b     ; sys_times    0x2b    struct tms __user *tbuf -       -       -       -       kernel/sys.c:903
-%define not implemented 0x2c     ; not implemented      0x2c    -       -       -       -       -       :
+;%define not implemented 0x2c     ; not implemented      0x2c    -       -       -       -       -       :
 %define sys_brk 0x2d     ; sys_brk      0x2d    unsigned long brk       -       -       -       -       mm/mmap.c:182
 %define sys_setgid16    0x2e     ; sys_setgid16 0x2e    old_gid_t gid   -       -       -       -       kernel/uid16.c:41
 %define sys_getgid16    0x2f     ; sys_getgid16 0x2f    -       -       -       -       -       kernel/uid16.c:211
@@ -51,12 +51,12 @@
 %define sys_getegid16   0x32     ; sys_getegid16        0x32    -       -       -       -       -       kernel/uid16.c:216
 %define sys_acct        0x33     ; sys_acct     0x33    const char __user *name -       -       -       -       kernel/acct.c:273
 %define sys_umount      0x34     ; sys_umount   0x34    char __user *name       int flags       -       -       -       fs/namespace.c:1683
-%define not implemented 0x35     ; not implemented      0x35    -       -       -       -       -       :
+;%define not implemented 0x35     ; not implemented      0x35    -       -       -       -       -       :
 %define sys_ioctl       0x36     ; sys_ioctl    0x36    unsigned int fd unsigned int cmd        unsigned long arg       -     fs/ioctl.c:692
 %define sys_fcntl       0x37     ; sys_fcntl    0x37    unsigned int fd unsigned int cmd        unsigned long arg       -     fs/fcntl.c:448
-%define not implemented 0x38     ; not implemented      0x38    -       -       -       -       -       :
+;%define not implemented 0x38     ; not implemented      0x38    -       -       -       -       -       :
 %define sys_setpgid     0x39     ; sys_setpgid  0x39    pid_t pid       pid_t pgid      -       -       -       kernel/sys.c:953
-%define not implemented 0x3a     ; not implemented      0x3a    -       -       -       -       -       :
+;%define not implemented 0x3a     ; not implemented      0x3a    -       -       -       -       -       :
 %define sys_olduname    0x3b     ; sys_olduname 0x3b    struct oldold_utsname __user *  -       -       -       -       kernel/sys.c:1214
 %define sys_umask       0x3c     ; sys_umask    0x3c    int mask        -       -       -       -       kernel/sys.c:1754
 %define sys_chroot      0x3d     ; sys_chroot   0x3d    const char __user *filename     -       -       -       -       fs/open.c:482
@@ -96,7 +96,7 @@
 %define sys_fchown16    0x5f     ; sys_fchown16 0x5f    unsigned int fd old_uid_t user  old_gid_t group -       -       kernel/uid16.c:31
 %define sys_getpriority 0x60     ; sys_getpriority      0x60    int which       int who -       -       -       kernel/sys.c:253
 %define sys_setpriority 0x61     ; sys_setpriority      0x61    int which       int who int niceval     -       -       kernel/sys.c:183
-%define not implemented 0x62     ; not implemented      0x62    -       -       -       -       -       :
+;%define not implemented 0x62     ; not implemented      0x62    -       -       -       -       -       :
 %define sys_statfs      0x63     ; sys_statfs   0x63    const char __user * path        struct statfs __user *buf       -     fs/statfs.c:176
 %define sys_fstatfs     0x64     ; sys_fstatfs  0x64    unsigned int fd struct statfs __user *buf       -       -       -     fs/statfs.c:197
 %define sys_ioperm      0x65     ; sys_ioperm   0x65    unsigned long   unsigned long   int     -       -       not found:
@@ -110,7 +110,7 @@
 %define sys_uname       0x6d     ; sys_uname    0x6d    struct old_utsname __user *     -       -       -       -       kernel/sys.c:1195
 %define sys_iopl        0x6e     ; sys_iopl     0x6e    unsigned int    -       -       -       -       arch/x86/kernel/ioport.c:109
 %define sys_vhangup     0x6f     ; sys_vhangup  0x6f    -       -       -       -       -       fs/open.c:1172
-%define not implemented 0x70     ; not implemented      0x70    -       -       -       -       -       :
+;%define not implemented 0x70     ; not implemented      0x70    -       -       -       -       -       :
 %define sys_vm86old     0x71     ; sys_vm86old  0x71    struct vm86_struct __user *     -       -       -       -       arch/x86/kernel/vm86_32.c:209
 %define sys_wait4       0x72     ; sys_wait4    0x72    pid_t pid       int __user *stat_addr   int options     struct rusage __user *ru       -       kernel/exit.c:1673
 %define sys_swapoff     0x73     ; sys_swapoff  0x73    const char __user *specialfile  -       -       -       -       mm/swapfile.c:2526
@@ -125,17 +125,17 @@
 %define sys_adjtimex    0x7c     ; sys_adjtimex 0x7c    struct timex __user *txc_p      -       -       -       -       kernel/time/time.c:301
 %define sys_mprotect    0x7d     ; sys_mprotect 0x7d    unsigned long start     size_t len      unsigned long prot      -     mm/mprotect.c:512
 %define sys_sigprocmask 0x7e     ; sys_sigprocmask      0x7e    int how old_sigset_t __user *set        old_sigset_t __user *oset      -       -       kernel/signal.c:3373
-%define not implemented 0x7f     ; not implemented      0x7f    -       -       -       -       -       :
+;%define not implemented 0x7f     ; not implemented      0x7f    -       -       -       -       -       :
 %define sys_init_module 0x80     ; sys_init_module      0x80    void __user *umod       unsigned long len       const char __user *uargs       -       -       kernel/module.c:3816
 %define sys_delete_module       0x81     ; sys_delete_module    0x81    const char __user *name_user    unsigned int flags    kernel/module.c:954
-%define not implemented 0x82     ; not implemented      0x82    -       -       -       -       -       :
+;%define not implemented 0x82     ; not implemented      0x82    -       -       -       -       -       :
 %define sys_quotactl    0x83     ; sys_quotactl 0x83    unsigned int cmd        const char __user *special      qid_t id      void __user *addr        -       fs/quota/quota.c:836
 %define sys_getpgid     0x84     ; sys_getpgid  0x84    pid_t pid       -       -       -       -       kernel/sys.c:1024
 %define sys_fchdir      0x85     ; sys_fchdir   0x85    unsigned int fd -       -       -       -       fs/open.c:460
 %define sys_bdflush     0x86     ; sys_bdflush  0x86    int func        long data       -       -       -       fs/buffer.c:3354
 %define sys_sysfs       0x87     ; sys_sysfs    0x87    int option      unsigned long arg1      unsigned long arg2      -     fs/filesystems.c:186
 %define sys_personality 0x88     ; sys_personality      0x88    unsigned int personality        -       -       -       -     kernel/exec_domain.c:51
-%define not implemented 0x89     ; not implemented      0x89    -       -       -       -       -       :
+;%define not implemented 0x89     ; not implemented      0x89    -       -       -       -       -       :
 %define sys_setfsuid16  0x8a     ; sys_setfsuid16       0x8a    old_uid_t uid   -       -       -       -       kernel/uid16.c:103
 %define sys_setfsgid16  0x8b     ; sys_setfsgid16       0x8b    old_gid_t gid   -       -       -       -       kernel/uid16.c:108
 %define sys_llseek      0x8c     ; sys_llseek   0x8c    unsigned int fd unsigned long offset_high       unsigned long offset_low       loff_t __user *result   unsigned int whence     fs/read_write.c:330
@@ -165,9 +165,9 @@
 %define sys_setresuid16 0xa4     ; sys_setresuid16      0xa4    old_uid_t ruid  old_uid_t euid  old_uid_t suid  -       -     kernel/uid16.c:56
 %define sys_getresuid16 0xa5     ; sys_getresuid16      0xa5    old_uid_t __user *ruid  old_uid_t __user *euid  old_uid_t __user *suid -       -       kernel/uid16.c:62
 %define sys_vm86        0xa6     ; sys_vm86     0xa6    unsigned long   unsigned long   -       -       -       arch/x86/kernel/vm86_32.c:215
-%define not implemented 0xa7     ; not implemented      0xa7    -       -       -       -       -       :
+;%define not implemented 0xa7     ; not implemented      0xa7    -       -       -       -       -       :
 %define sys_poll        0xa8     ; sys_poll     0xa8    struct pollfd __user *ufds      unsigned int nfds       int timeout   fs/select.c:1016
-%define not implemented 0xa9     ; not implemented      0xa9    -       -       -       -       -       :
+;%define not implemented 0xa9     ; not implemented      0xa9    -       -       -       -       -       :
 %define sys_setresgid16 0xaa     ; sys_setresgid16      0xaa    old_gid_t rgid  old_gid_t egid  old_gid_t sgid  -       -     kernel/uid16.c:79
 %define sys_getresgid16 0xab     ; sys_getresgid16      0xab    old_gid_t __user *rgid  old_gid_t __user *egid  old_gid_t __user *sgid -       -       kernel/uid16.c:86
 %define sys_prctl       0xac     ; sys_prctl    0xac    int option      unsigned long arg2      unsigned long arg3      unsigned long arg4     unsigned long arg5      kernel/sys.c:2187
@@ -186,8 +186,8 @@
 %define sys_capset      0xb9     ; sys_capset   0xb9    cap_user_header_t header        const cap_user_data_t data      -     kernel/capability.c:224
 %define sys_sigaltstack 0xba     ; sys_sigaltstack      0xba    const struct sigaltstack __user *uss    struct sigaltstack __user *uoss        -       -       -       kernel/signal.c:3245
 %define sys_sendfile    0xbb     ; sys_sendfile 0xbb    int out_fd      int in_fd       off_t __user *offset    size_t count  fs/read_write.c:1462
-%define not implemented 0xbc     ; not implemented      0xbc    -       -       -       -       -       :
-%define not implemented 0xbd     ; not implemented      0xbd    -       -       -       -       -       :
+;%define not implemented 0xbc     ; not implemented      0xbc    -       -       -       -       -       :
+;%define not implemented 0xbd     ; not implemented      0xbd    -       -       -       -       -       :
 %define sys_vfork       0xbe     ; sys_vfork    0xbe    -       -       -       -       -       kernel/fork.c:2128
 %define sys_getrlimit   0xbf     ; sys_getrlimit        0xbf    unsigned int resource   struct rlimit __user *rlim      -     kernel/sys.c:1324
 %define sys_mmap_pgoff  0xc0     ; sys_mmap_pgoff       0xc0    -       -       -       -       -       mm/mmap.c:1476
@@ -220,8 +220,8 @@
 %define sys_madvise     0xdb     ; sys_madvise  0xdb    unsigned long start     size_t len      int behavior    -       -     mm/madvise.c:793
 %define sys_getdents64  0xdc     ; sys_getdents64       0xdc    unsigned int fd struct linux_dirent64 __user *dirent    unsigned int count     -       -       fs/readdir.c:296
 %define sys_fcntl64     0xdd     ; sys_fcntl64  0xdd    unsigned int fd unsigned int cmd        unsigned long arg       -     fs/fcntl.c:472
-%define not implemented 0xde     ; not implemented      0xde    -       -       -       -       -       :
-%define not implemented 0xdf     ; not implemented      0xdf    -       -       -       -       -       :
+;%define not implemented 0xde     ; not implemented      0xde    -       -       -       -       -       :
+;%define not implemented 0xdf     ; not implemented      0xdf    -       -       -       -       -       :
 %define sys_gettid      0xe0     ; sys_gettid   0xe0    -       -       -       -       -       kernel/sys.c:844
 %define sys_readahead   0xe1     ; sys_readahead        0xe1    int fd  loff_t offset   size_t count    -       -       mm/readahead.c:576
 %define sys_setxattr    0xe2     ; sys_setxattr 0xe2    const char __user *path const char __user *name const void __user *value       size_t size     int flags       fs/xattr.c:483
@@ -249,7 +249,7 @@
 %define sys_io_submit   0xf8     ; sys_io_submit        0xf8    aio_context_t   long    struct iocb __user * __user *   -     fs/aio.c:1714
 %define sys_io_cancel   0xf9     ; sys_io_cancel        0xf9    aio_context_t ctx_id    struct iocb __user *iocb        struct io_event __user *result -       -       fs/aio.c:1789
 %define sys_fadvise64   0xfa     ; sys_fadvise64        0xfa    int fd  loff_t offset   size_t len      int advice      -     mm/fadvise.c:182
-%define not implemented 0xfb     ; not implemented      0xfb    -       -       -       -       -       :
+;%define not implemented 0xfb     ; not implemented      0xfb    -       -       -       -       -       :
 %define sys_exit_group  0xfc     ; sys_exit_group       0xfc    int error_code  -       -       -       -       kernel/exit.c:977
 %define sys_lookup_dcookie      0xfd     ; sys_lookup_dcookie   0xfd    u64 cookie64    char __user *buf        size_t len    fs/dcookies.c:149
 %define sys_epoll_create        0xfe     ; sys_epoll_create     0xfe    int size        -       -       -       -       fs/eventpoll.c:1999
@@ -271,7 +271,7 @@
 %define sys_tgkill      0x10e    ; sys_tgkill   0x10e   pid_t tgid      pid_t pid       int sig -       -       kernel/signal.c:3019
 %define sys_utimes      0x10f    ; sys_utimes   0x10f   char __user *filename   struct timeval __user *utimes   -       -     fs/utimes.c:215
 %define sys_fadvise64_64        0x110    ; sys_fadvise64_64     0x110   int fd  loff_t offset   loff_t len      int advice    mm/fadvise.c:29
-%define not implemented 0x111    ; not implemented      0x111   -       -       -       -       -       :
+;%define not implemented 0x111    ; not implemented      0x111   -       -       -       -       -       :
 %define sys_mbind       0x112    ; sys_mbind    0x112   -       -       -       -       -       mm/mempolicy.c:1323
 %define sys_get_mempolicy       0x113    ; sys_get_mempolicy    0x113   int __user *policy      unsigned long __user *nmask   unsigned long maxnode    unsigned long addr      unsigned long flags     mm/mempolicy.c:1460
 %define sys_set_mempolicy       0x114    ; sys_set_mempolicy    0x114   int mode        const unsigned long __user *nmask     unsigned long maxnode    -       -       mm/mempolicy.c:1345
@@ -283,7 +283,7 @@
 %define sys_mq_getsetattr       0x11a    ; sys_mq_getsetattr    0x11a   mqd_t mqdes     const struct mq_attr __user *mqstat   struct mq_attr __user *omqstat   -       -       ipc/mqueue.c:1398
 %define sys_kexec_load  0x11b    ; sys_kexec_load       0x11b   unsigned long entry     unsigned long nr_segments       struct kexec_segment __user *segments  unsigned long flags     -       kernel/kexec.c:195
 %define sys_waitid      0x11c    ; sys_waitid   0x11c   int which       pid_t pid       struct siginfo __user *infop    int options    struct rusage __user *ru        kernel/exit.c:1596
-%define not implemented 0x11d    ; not implemented      0x11d   -       -       -       -       -       :
+;%define not implemented 0x11d    ; not implemented      0x11d   -       -       -       -       -       :
 %define sys_add_key     0x11e    ; sys_add_key  0x11e   const char __user *_type        const char __user *_description const void __user *_payload    size_t plen     key_serial_t destringid security/keys/keyctl.c:62
 %define sys_request_key 0x11f    ; sys_request_key      0x11f   const char __user *_type        const char __user *_descriptioconst char __user *_callout_info key_serial_t destringid -       security/keys/keyctl.c:158
 %define sys_keyctl      0x120    ; sys_keyctl   0x120   int cmd unsigned long arg2      unsigned long arg3      unsigned long arg4     unsigned long arg5      security/keys/keyctl.c:1641
