@@ -52,6 +52,8 @@ static const char* token_type_to_str(unsigned int type){
             return "TOKEN_RCORCHETES";
         case TOKEN_REGISTRO:        // para eax, ebx, ecx, edx y etc
             return "TOKEN_REGISTRO";
+        case TOKEN_PUNTO:
+            return "TOKEN_PUNTO";
         default:
             printf("Este token no exite"); break;
     }

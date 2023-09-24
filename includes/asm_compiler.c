@@ -47,36 +47,44 @@ void asm_syscall(ast_t* node, list_c* list, size_t is_last){
     //printf("pointer regs -> %p, size list: %lld\n", node->data_almacenada.regs, node->data_almacenada.nombre_valor->size);
     for(unsigned char i = 0; i < node->data_almacenada.nombre_valor->size; i++){
         name_value* values = (name_value*)(node->data_almacenada.nombre_valor->items[i]);
-        switch(compiler_word_arch){
-            case 64:
-                /*
-                size = (snprintf(NULL, 0, ASM_MOV("%s", "%llu"), values->name, values->value.val64) + 1) * sizeof(unsigned char);
-                debug_malloc(unsigned char, instrucciones, sizeof(unsigned char) * size);
-                sprintf(instrucciones, ASM_MOV("%s", "%llu"), values->name, values->value.val64);
-                */
-                instrucciones = format_intrucion(ASM_MOV("%s", "%llu"), values->name, values->value.val64);
-                // printf("[%d] %s = %llu\n",i, values->name, values->value.val64);
-                break;
-            case 32:
-                /*
-                size = (snprintf(NULL, 0, ASM_MOV("%s", "%u"), values->name, values->value.val32) + 1) * sizeof(unsigned char);
-                debug_malloc(unsigned char, instrucciones, sizeof(unsigned char) * size);
-                sprintf(instrucciones, ASM_MOV("%s", "%u"), values->name, values->value.val32);
-                */
-                instrucciones = format_intrucion(ASM_MOV("%s", "%llu"), values->name, values->value.val64);
-                // printf("[%d] %s = %u\n",i, values->name, values->value.val32);
-                break;
-            case 16:
-                /*
-                size = (snprintf(NULL, 0, ASM_MOV("%s", "%hu"), values->name, values->value.val16) + 1) * sizeof(unsigned char);
-                debug_malloc(unsigned char, instrucciones, sizeof(unsigned char) * size);
-                sprintf(instrucciones, ASM_MOV("%s", "%hu"), values->name, values->value.val16);
-                */
-                instrucciones = format_intrucion(ASM_MOV("%s", "%llu"), values->name, values->value.val64);
-                // printf("[%d] %s = %hu\n",i, values->name, values->value.val16);
-                break;
-            default:
-                printf("wtf con esta arquitectura\n");
+        if (!strcmp(values->name, "int")){
+            instrucciones = format_intrucion(ASM_INTERRUPCION("%s"), values->value.pointer);
+            goto exit_not_syscall;
+        } else if(!strcmp(values->name, "syscall")){
+            instrucciones = format_intrucion(ASM_INTERRUPCION_SYSCALL());
+            goto exit_not_syscall;
+        }else{
+            switch(compiler_word_arch){
+                case 64:
+                    /*
+                    size = (snprintf(NULL, 0, ASM_MOV("%s", "%llu"), values->name, values->value.val64) + 1) * sizeof(unsigned char);
+                    debug_malloc(unsigned char, instrucciones, sizeof(unsigned char) * size);
+                    sprintf(instrucciones, ASM_MOV("%s", "%llu"), values->name, values->value.val64);
+                    */
+                    instrucciones = format_intrucion(ASM_MOV("%s", "%llu"), values->name, values->value.val64);
+                    // printf("[%d] %s = %llu\n",i, values->name, values->value.val64);
+                    break;
+                case 32:
+                    /*
+                    size = (snprintf(NULL, 0, ASM_MOV("%s", "%u"), values->name, values->value.val32) + 1) * sizeof(unsigned char);
+                    debug_malloc(unsigned char, instrucciones, sizeof(unsigned char) * size);
+                    sprintf(instrucciones, ASM_MOV("%s", "%u"), values->name, values->value.val32);
+                    */
+                    instrucciones = format_intrucion(ASM_MOV("%s", "%llu"), values->name, values->value.val64);
+                    // printf("[%d] %s = %u\n",i, values->name, values->value.val32);
+                    break;
+                case 16:
+                    /*
+                    size = (snprintf(NULL, 0, ASM_MOV("%s", "%hu"), values->name, values->value.val16) + 1) * sizeof(unsigned char);
+                    debug_malloc(unsigned char, instrucciones, sizeof(unsigned char) * size);
+                    sprintf(instrucciones, ASM_MOV("%s", "%hu"), values->name, values->value.val16);
+                    */
+                    instrucciones = format_intrucion(ASM_MOV("%s", "%llu"), values->name, values->value.val64);
+                    // printf("[%d] %s = %hu\n",i, values->name, values->value.val16);
+                    break;
+                default:
+                    printf("wtf con esta arquitectura\n");
+            }
         }
         printf("%s\n", instrucciones);
         //printf("is_last = %zu\n",is_last);
@@ -93,8 +101,9 @@ void asm_syscall(ast_t* node, list_c* list, size_t is_last){
             instrucciones = format_intrucion(ASM_INTERRUPCION("0x%x"), 0x10);
             break;
     }
-    list_push(list, instrucciones);
-    printf("%s\n", instrucciones);
+    exit_not_syscall:
+        list_push(list, instrucciones);
+        printf("%s\n", instrucciones);
 }
 
 void print_list_assembly(list_c* list){

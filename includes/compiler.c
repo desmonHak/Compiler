@@ -36,7 +36,12 @@ void compile_file(name_file name_file_open){
 	close_file(&soruce_code);*/
     printf("El archivo(%s)\n", name_file_open);
     unsigned char text[] = 
-        "#syscall[eax = 1, ebx = 2,ecx = 3,]" 
+        "#syscall[ \
+            eax = 1, \
+            ebx = 2, \
+            ecx = 3,  \
+            .int = 0x80 \
+        ]" \
         "#syscall(1,2,3, )" 
         "#syscall(32,333,35)";
     compile(text, sizeof(text));

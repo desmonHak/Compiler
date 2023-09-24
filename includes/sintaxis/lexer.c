@@ -83,10 +83,25 @@ token_t* lexer_advance_current(lexer_t* lexer, unsigned int type){
 }
 
 token_t* lexer_parser_number(lexer_t* lexer){
+    /*
+     *
+     *  Esta funcion convierte un valor en entero asignando un token de tipo int
+     *  permite detectar si es un valor hexadecimal, binario o decimal tmb
+     *
+     */
+
     unsigned char * value = (unsigned char*)calloc(1, sizeof(unsigned char));
 
-    while (isdigit(lexer->c))
+    while (isdigit(lexer->c) || lexer->c == 'x' || lexer->c == 'b')
     {
+        /*
+         *
+         *  Si es un digitol decimal(todos son numeros ),
+         *  O un valor hexadimal (hay un caracter x de por medio),
+         *  O un valor binario (hay un caracter b de por medio),
+         *  Se considera como entero
+         * 
+         */
         value = (unsigned char*)realloc(value, (strlen(value) + 2) * sizeof(unsigned char));
         strcat(value, (char[]){lexer->c, 0});
         lexer_advance(lexer);
@@ -165,6 +180,7 @@ token_t* lexer_next_token(lexer_t* lexer){
         case '>': return lexer_advance_current(lexer, TOKEN_LT);
         case '<': return lexer_advance_current(lexer, TOKEN_RT);
         case ';': return lexer_advance_current(lexer, TOKEN_SEMI);
+        case '.': return lexer_advance_current(lexer, TOKEN_PUNTO);
         case '\0': break;
         default: printf("No se esperaba este caracter: %c\n", lexer->c); exit(1); break;
         }

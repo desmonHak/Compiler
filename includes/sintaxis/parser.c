@@ -200,10 +200,47 @@ ast_t *parser_parser_macro_syscall(parser_t *parser){
         parser_eat(parser, TOKEN_LCORCHETES);
         // si el valor contenido entre los corchetes empieza por el nombre de un registro
         ast->data_almacenada.nombre_valor = init_list(sizeof(name_value));
+
         while(parser->token->type != TOKEN_RCORCHETES){
             // obetenemos el registro
             unsigned char *registro = parser->token->value;
-            if (parser->token->type != TOKEN_REGISTRO) {
+
+            /*
+             *
+             *  Si se encontro un punto se econtro un atributo, por lo que se elimina el punto y se
+             *  Espera obtener un token id que sea el nombre del atributo
+             * 
+             */
+            if (parser->token->type == TOKEN_PUNTO){
+                parser_eat(parser, TOKEN_PUNTO);
+                name_value *data;
+                debug_malloc(name_value, data, sizeof(name_value));
+
+                if (!strcmp(parser->token->value, "int")){
+                    // guardamos int:
+                    data->name = parser->token->value; 
+
+                    parser_eat(parser, TOKEN_ID);
+                    parser_eat(parser, TOKEN_ASIGNACION);
+
+                    // guardamos el valor de la interrupcion:
+                    data->value.pointer = parser->token->value; 
+                    parser_eat(parser, TOKEN_INT);
+
+                } else if (!strcmp(parser->token->value, "syscall")){
+                    data->name = parser->token->value; 
+                    parser_eat(parser, TOKEN_ID);
+                } else {
+                    puts("Este atributo no existe");
+                    exit(1);
+                }
+                list_push(ast->data_almacenada.nombre_valor, data);
+                // si el token siguiente al del valor es un token coma eliminarlo
+                if(parser->token->type == TOKEN_COMMA) parser_eat(parser, TOKEN_COMMA);
+                continue;
+            }
+
+            if (parser->token->type != TOKEN_REGISTRO ) {
                 /*
                  *
                  *  Si esto ocurre quiere decir que #syscall [] contenia dentro el primer registro
@@ -211,14 +248,17 @@ ast_t *parser_parser_macro_syscall(parser_t *parser){
                  *  motivo los siguientes a este no seguian el formato,
                  * 
                  */
+                //printf("%s\n",token_to_str(lexer_next_token(parser->lexer)));
                 if (parser->token->type == TOKEN_COMMA) 
                     printf_color("#{FG:lwhite}[#{FG:lred}Sintax error#{FG:lwhite}]#{FG:reset} : en #{FG:lred}%d#{FG:reset}, no se a expecificado un registro -> #{FG:lyellow}%s#{FG:reset}\n", parser->lexer->i, parser->token->value);
                 else if (parser->token->type == TOKEN_INT) 
                     printf_color("#{FG:lwhite}[#{FG:lred}Sintax error#{FG:lwhite}]#{FG:reset} : en #{FG:lred}%d#{FG:reset}, no se a expecificado un registro al que asignar el valor -> #{FG:lyellow}%s#{FG:reset}\n", parser->lexer->i, parser->token->value);
+                
                 else 
-                    printf_color("#{FG:lwhite}[#{FG:lred}Sintax error#{FG:lwhite}]#{FG:reset} : en #{FG:lred}%d#{FG:reset}, Usted no cerror la macro syscall -> #{FG:lyellow}%s#{FG:reset}\n", parser->lexer->i, parser->token->value);
+                    printf_color("#{FG:lwhite}[#{FG:lred}Sintax error#{FG:lwhite}]#{FG:reset} : en #{FG:lred}%d#{FG:reset}, Usted no cerro la macro syscall -> #{FG:lyellow}%s#{FG:reset}\n", parser->lexer->i, parser->token->value);
                 exit(1);
             }
+
             parser_eat(parser, TOKEN_REGISTRO);     // eliminamos el token del registro
             parser_eat(parser, TOKEN_ASIGNACION);   // eliminamos el simbolo de igual
 

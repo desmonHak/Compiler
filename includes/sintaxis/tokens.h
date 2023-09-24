@@ -28,6 +28,7 @@ typedef struct TOKEN_STRING {
         TOKEN_LCORCHETES,     // para el corchete izquierdo -> [
         TOKEN_RCORCHETES,     // para el corchete derecho -> ]
         TOKEN_REGISTRO,       // para eax, ebx, ecx, edx y etc
+        TOKEN_PUNTO,          // para los puntos
     } type;
 } token_t;
 
