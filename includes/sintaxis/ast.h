@@ -43,6 +43,9 @@ static char* string_ID_regs[] = {
     "7","8","9",  "0"
 };
 #endif
+
+typedef struct AST_STRUCT ast_t;
+
 /*
  *
  *  Asocia un nombre con un valor, una estructura
@@ -54,13 +57,24 @@ static char* string_ID_regs[] = {
 typedef struct name_value {
     unsigned char* name; // nombre
     union {
-        uint8_t   val8;   // para valores de 8bits
-        uint16_t val16;   // para valores de 16bits
-        uint32_t val32;   // para valores de 32bits
-        uint64_t val64;   // para valores de 64bits
-        void*    pointer; // para punteros
+        uint8_t   val8;          // para valores de 8bits
+        uint16_t val16;         // para valores de 16bits
+        uint32_t val32;         // para valores de 32bits
+        uint64_t val64;         // para valores de 64bits
+        void*    pointer;       // para punteros
+        ast_t*   ast_node;      // para otros nodos ast
+        unsigned char* string;  // para strings
     } value;              // valor asociado
-
+    unsigned char  type_data; // almaena el tipo de dato almacenado
+    enum {
+        valor_8bits,
+        valor_16bits,
+        valor_32bits,
+        valor_64bits,
+        valor_puntero_generico,
+        valor_nodo_ast,
+        valor_string
+    } type_data_values;
 } name_value;
 
 typedef struct  AST_STRUCT
@@ -76,7 +90,9 @@ typedef struct  AST_STRUCT
         AST_VARIABLE,            // para variabes
         AST_STATEMENT,           // para declaraciones
         AST_NOOP,                // no requiere una operacion
-        AST_VALUE
+        AST_VALUE,               // para valores enteros constantes
+        AST_VAR,                 // para variables
+        AST_END                  // final del ast
         
     } type;
     list_c *children;

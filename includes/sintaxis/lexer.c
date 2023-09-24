@@ -109,6 +109,60 @@ token_t* lexer_parser_number(lexer_t* lexer){
     return init_token(value, TOKEN_INT);
 }
 
+token_t* lexer_parser_string(lexer_t* lexer){
+    unsigned short type_token = 0;
+    unsigned char * value = (unsigned char*)calloc(1, sizeof(unsigned char));
+    unsigned char caracter_prohibido = '"';
+    if ( 
+        lexer->src[lexer->i]   == '"' && 
+        lexer->src[lexer->i+1] == '"' && 
+        lexer->src[lexer->i+2] == '"'    
+    ) {
+        type_token = TOKEN_DOC_STRING;
+        caracter_prohibido = '"';
+        lexer_advance(lexer);lexer_advance(lexer);
+    } else if (
+        lexer->src[lexer->i]   == '\'' && 
+        lexer->src[lexer->i+1] == '\'' && 
+        lexer->src[lexer->i+2] == '\''   
+    ) { 
+        type_token = TOKEN_DOC_STRING;
+        caracter_prohibido = '\'';
+        lexer_advance(lexer);lexer_advance(lexer);
+    } else if (
+        lexer->src[lexer->i]   == '"'
+    ) {
+        type_token = TOKEN_STRING_DOBLE;
+        caracter_prohibido = '"';
+    } else if (lexer->src[lexer->i]   == '\'') {
+        type_token = TOKEN_STRING_SIMPLE;
+        caracter_prohibido = '\'';
+    } 
+    lexer_advance(lexer);
+
+    while (1){
+        // si se encontro una \ y no se encontr el caracter prohibido o uno de escape
+        // se finaliza el bucle 
+        //printf(" last(%c) %hu = %c -> caracter_prohibido  %hu = %c \n", lexer->src[lexer->i-1], lexer->c, lexer->c, caracter_prohibido, caracter_prohibido );
+        if(
+            (lexer->c == caracter_prohibido && lexer->src[lexer->i-1] != '\\') 
+        ) { 
+            //puts("ex");
+            break;
+        }
+        /*else if (lexer->c == 0x0){
+            puts("ERROR  lexer");
+            exit(1);
+        }*/
+
+        value = (unsigned char*)realloc(value, (strlen(value) + 2) * sizeof(unsigned char));
+        strcat(value, (char[]){lexer->c, 0});
+        lexer_advance(lexer);
+    }
+    lexer_advance(lexer);
+    return init_token(value, type_token);
+}
+
 void print_tokents(lexer_t* lexer){
     token_t* tok;
     while((tok = lexer_next_token(lexer))->type != TOKEN_EOF){
@@ -168,6 +222,8 @@ token_t* lexer_next_token(lexer_t* lexer){
                     return lexer_advance_current(lexer, TOKKEN_MACRO_DEFINE);
                 }
             }
+        case '"' :
+        case '\'': return lexer_parser_string(lexer);
 
         case '(': return lexer_advance_current(lexer, TOKEN_LPAREN);
         case ')': return lexer_advance_current(lexer, TOKEN_RPAREN);

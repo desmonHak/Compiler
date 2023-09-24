@@ -43,7 +43,9 @@ void compile_file(name_file name_file_open){
             .int = 0x80 \
         ]" \
         "#syscall(1,2,3, )" 
-        "#syscall(32,333,35)";
+        "%syscall(32,333,35)"
+        "var = 'hola mundo'"
+        "var = 1";
     compile(text, sizeof(text));
 }
 

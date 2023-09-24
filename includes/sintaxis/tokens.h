@@ -29,6 +29,9 @@ typedef struct TOKEN_STRING {
         TOKEN_RCORCHETES,     // para el corchete derecho -> ]
         TOKEN_REGISTRO,       // para eax, ebx, ecx, edx y etc
         TOKEN_PUNTO,          // para los puntos
+        TOKEN_STRING_SIMPLE,  // para strings con comillas simples
+        TOKEN_STRING_DOBLE,   // para strings con comillas dobles
+        TOKEN_DOC_STRING,     // para doc string's (documentar)
     } type;
 } token_t;
 

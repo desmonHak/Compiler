@@ -54,6 +54,13 @@ static const char* token_type_to_str(unsigned int type){
             return "TOKEN_REGISTRO";
         case TOKEN_PUNTO:
             return "TOKEN_PUNTO";
+        case TOKEN_STRING_SIMPLE:
+            return "TOKEN_STRING_SIMPLE";
+        case TOKEN_STRING_DOBLE:
+            return "TOKEN_STRING_DOBLE";
+        case TOKEN_DOC_STRING:
+            return "TOKEN_DOC_STRING";
+        
         default:
             printf("Este token no exite"); break;
     }
