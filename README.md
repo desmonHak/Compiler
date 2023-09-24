@@ -6,6 +6,10 @@
 Compiler Version 0.0
 ```
 
+para Windows:
+Descargar OpenSSL: https://slproweb.com/products/Win32OpenSSL.html
+Descargar ZLib: https://github.com/horta/zlib.install
+
 
 
 ```C

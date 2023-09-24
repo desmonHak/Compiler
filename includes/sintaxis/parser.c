@@ -52,7 +52,7 @@ ast_t *paser_paser_var(unsigned char *name_id, parser_t *parser)
      *  Se encarga de analizar variables
      *
      */
-    //parser_eat(parser, TOKEN_ID); // comerse el ID
+    // parser_eat(parser, TOKEN_ID); // comerse el ID
 
     // crear un nombre/dato
     name_value *data;
@@ -532,8 +532,9 @@ void print_ast_recursive(ast_t *node, int indent, int is_last_child)
         printf("Value(%p)\n", node->value);
         break;
     case AST_VAR:
-        for (unsigned char i = 0; i < node->data_almacenada.nombre_valor->size; i++){
-            name_value* var = (name_value*)(node->data_almacenada.nombre_valor->items[i]);
+        for (unsigned char i = 0; i < node->data_almacenada.nombre_valor->size; i++)
+        {
+            name_value *var = (name_value *)(node->data_almacenada.nombre_valor->items[i]);
             printf("%s = ", var->name);
             switch (var->type_data)
             {
@@ -622,8 +623,9 @@ ast_t *parser_parser_expr(parser_t *parser)
     case TOKEN_INT:
         return parser_parser_int(parser);
     // case TOKEN_COMMA:           return init_ast(AST_NOOP);
-    case TOKEN_EOF: 
-    default: return init_ast(AST_END);
+    case TOKEN_EOF:
+    default:
+        return init_ast(AST_END);
         printf("[Parser]: Se esperaba un token %s\n", token_to_str(parser->token));
         exit(1);
     }

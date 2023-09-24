@@ -33,6 +33,15 @@ C:.
 |   |       colors.h
 |   |       LICENSE
 |   |       
+|   +---crypt
+|   |       md4.c
+|   |       md4.h
+|   |       md5.c
+|   |       md5.h
+|   |       rotate-bits.h
+|   |       sha256.c
+|   |       sha256.h
+|   |       
 |   +---sintaxis
 |   |       ast.c
 |   |       ast.h

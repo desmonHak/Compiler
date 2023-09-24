@@ -34,6 +34,7 @@ void compile_file(name_file name_file_open){
     
 	compile(soruce_code.data, get_size_file(soruce_code));
 	close_file(&soruce_code);*/
+
     printf("El archivo(%s)\n", name_file_open);
     unsigned char text[] = 
         "#syscall[ \
@@ -46,6 +47,20 @@ void compile_file(name_file name_file_open){
         "%syscall(32,333,35)"
         "var = 'hola mundo'"
         "var = 1";
+
+    #include "crypt/md5.h"
+    unsigned char hash[16];
+    MD5_CTX md5;
+    MD5_Init(&md5);
+    MD5_Update(&md5, text, strlen(text));
+    MD5_Final(hash, &md5);
+
+    printf("Hash code(md5): ");
+    for(int i = 0; i < 16; i++){
+        printf("%2.2x", hash[i]);
+    }
+    puts("");
+
     compile(text, sizeof(text));
 }
 

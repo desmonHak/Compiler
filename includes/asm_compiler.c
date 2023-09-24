@@ -48,10 +48,10 @@ void asm_syscall(ast_t* node, list_c* list, size_t is_last){
     for(unsigned char i = 0; i < node->data_almacenada.nombre_valor->size; i++){
         name_value* values = (name_value*)(node->data_almacenada.nombre_valor->items[i]);
         if (!strcmp(values->name, "int")){
-            instrucciones = format_intrucion(ASM_INTERRUPCION("%s"), values->value.pointer);
+            instrucciones = format_intrucion(ASM_INTERRUPCION("%s")"\n", values->value.pointer);
             goto exit_not_syscall;
         } else if(!strcmp(values->name, "syscall")){
-            instrucciones = format_intrucion(ASM_INTERRUPCION_SYSCALL());
+            instrucciones = format_intrucion(ASM_INTERRUPCION_SYSCALL()"\n");
             goto exit_not_syscall;
         }else{
             switch(compiler_word_arch){
@@ -92,13 +92,13 @@ void asm_syscall(ast_t* node, list_c* list, size_t is_last){
     }
     switch(compiler_word_arch){
         case 64:
-            instrucciones = format_intrucion(ASM_INTERRUPCION_SYSCALL());
+            instrucciones = format_intrucion(ASM_INTERRUPCION_SYSCALL()"\n");
             break;
         case 32:
-            instrucciones = format_intrucion(ASM_INTERRUPCION("0x%x"), 0x80);
+            instrucciones = format_intrucion(ASM_INTERRUPCION("0x%x")"\n", 0x80);
             break;
         case 16:
-            instrucciones = format_intrucion(ASM_INTERRUPCION("0x%x"), 0x10);
+            instrucciones = format_intrucion(ASM_INTERRUPCION("0x%x")"\n", 0x10);
             break;
     }
     exit_not_syscall:
