@@ -89,7 +89,19 @@
      ; RAX,   RCX,   RDX,   RBX,   RSP, RBP, RSI, RDI, R8-R15
 
 
-
+%if   __BITS__ == 64
+extern printf
+%define func_printf printf
+extern exit
+%define func_exit   exit
+%define func_WinMain WinMain@16
+%elif __BITS__ == 32
+extern _printf
+%define func_printf _printf
+extern _exit
+%define func_exit   _exit
+%define func_WinMain _WinMain@16
+%endif
 
 %define GET_DATE      __DATE__             ;"2010-01-01" 
 %define GET_TIME      __TIME__             ;"00:00:42" 
