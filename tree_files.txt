@@ -1,12 +1,12 @@
 Listado de rutas de carpetas para el volumen Windows
-El n£mero de serie del volumen es 00650044 56AF:0D29
+El nï¿½mero de serie del volumen es 00650044 56AF:0D29
 C:.
 |   .gitignore
 |   Makefile
 |   README.md
 |   tree_files.txt
 |   
-+---.vscode
++---.vscode 
 |       c_cpp_properties.json
 |       settings.json
 |       tasks.json
