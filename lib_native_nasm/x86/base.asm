@@ -37,6 +37,11 @@
 %define true 1
 %define false 0
 
+%define uint8_t BYTE
+%define uint16_t WORD
+%define uint32_t DWORD
+%define uint64_t QWORD
+
 %define SIZE_INT8  1
 %define SIZE_INT16 2
 %define SIZE_INT32 4
@@ -97,6 +102,7 @@
 %define SIZE_T_CONTADOR        CX
 %define SIZE_T_DATOS           DX
 %endif
+
 
 %macro SAVE_OLD_STACK_FRAME 0
     push BASE_STACk

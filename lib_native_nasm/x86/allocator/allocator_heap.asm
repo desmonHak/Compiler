@@ -49,9 +49,10 @@ section .bss
     %endif
 
 section .data
-    init_bss      SIZE_T_DATA __bss_start
-    end_bss       SIZE_T_DATA __bss_end
-    init_alloc    SIZE_T_DATA (__bss_end + 1) 
+    init_bss      SIZE_T_DATA __bss_start ; inicio de bss
+    end_bss       SIZE_T_DATA __bss_end   ; final de bss
+    init_alloc    SIZE_T_DATA (__bss_end + 1) ; inicio del heap
+    align_value db 1 ;  tamaño de alineamiento
     msg dd  __BITS__
 
     %ifdef DEBUG_ENABLE
@@ -61,11 +62,12 @@ section .data
     format_esp        db "value esp: 0x%p",  0xa, 0x0
     format_ebp        db "value ebp: 0x%p",  0xa, 0x0
 
-    format_struct_size_block     db "value size_block: 0x%p",  0xa, 0x0
-    format_struct_status         db "value status: 0x%hhx",  0xa, 0x0
-    format_struct_pointer        db "value pointer: 0x%p",  0xa, 0x0
+    format_struct_size_block     db "[+] value size_block: 0x%p",  0xa, 0x0
+    format_struct_padding        db "[+] padding del bloque: 0x%hx",   0xa, 0x0
+    format_struct_status         db "[+] value status: 0x%hhx",  0xa, 0x0
+    format_struct_pointer        db "[+] value pointer: 0x%p",  0xa, 0x0
 
-    format_memresever db "dirrecion de memoria inicializada: 0x%p", 0xa, 0x0
+    format_memresever db "dirrecion de memoria inicializada: 0x%p", 0xa, 0xa,0x0
     format_counter_alloc db "new counter_alloc:  0x%p", 0xa, 0x0
     %endif
 %endif
@@ -83,6 +85,17 @@ section .text
         cmp SIZE_T_SIZE_OPERATION [counter_alloc], 0x0
         jne is_not_zero
 
+            mov SIZE_T_BASE, align_value
+
+            mov SIZE_T_DATOS, __BITS__
+            dec SIZE_T_DATOS
+
+            add SIZE_T_BASE, SIZE_T_DATOS
+            not SIZE_T_DATOS
+            and SIZE_T_BASE, SIZE_T_DATOS
+            mov [align_value], SIZE_T_BASE
+
+
             mov SIZE_T_BASE, init_alloc
 
             mov SIZE_T_DATOS, __BITS__
@@ -93,6 +106,8 @@ section .text
             and SIZE_T_BASE, SIZE_T_DATOS
 
             mov SIZE_T_SIZE_OPERATION [init_alloc], SIZE_T_BASE
+            mov [counter_alloc], SIZE_T_BASE
+            set_status(SIZE_T_BASE, 0)
 
         is_not_zero: ; si fue 0 (init alloc no se alineo)
 
@@ -128,7 +143,15 @@ section .text
         %endif
 
         push 5                                  ; memoria a reservar
-        push SIZE_T_SIZE_OPERATION [init_alloc] ; direccion base a usar
+        push SIZE_T_SIZE_OPERATION [counter_alloc] ; direccion base a usar
+        call _alloc_heap_run_time
+        push SIZE_T_ACUMLADOR
+        push format_memresever 
+        call func_printf
+        add TOP_STACk, (__BITS__/8) * 2
+
+        push 10                            ; memoria a reservar
+        push SIZE_T_SIZE_OPERATION [counter_alloc] ; direccion base a usar
         call _alloc_heap_run_time
         push SIZE_T_ACUMLADOR
         push format_memresever 
@@ -158,26 +181,52 @@ section .text
     %ifdef DEBUG_ENABLE
     global _print_debug_alloc
     _print_debug_alloc:
+        ; el registro base(SIZE_T_BASE) tiene la direccion a la estructura a imprimir
         SAVE_OLD_STACK_FRAME
 
-        get_size_block SIZE_T_CONTADOR, SIZE_T_BASE
+        sub TOP_STACk, 2
+
+        ; obtiene la direccion del miembro y lo coloca en SIZE_T_CONTADOR
+        push AX
+        get_size_block SIZE_T_CONTADOR, SIZE_T_BASE ; obtiene el size block
+        mov AX, [SIZE_T_CONTADOR]
+        mov uint16_t [TOP_STACk+2], AX ; guarda el size block en la pila;
+        pop AX
         push SIZE_T_SIZE_OPERATION [SIZE_T_CONTADOR]
         push format_struct_size_block 
         call func_printf
         add TOP_STACk, (__BITS__/8) * 2
+        
+        mov SIZE_T_CONTADOR, [TOP_STACk]                     ; eax = MemoryAddress
+        add SIZE_T_CONTADOR, sizeof_Header_block_heap        ; eax += HeaderSize
+        dec SIZE_T_CONTADOR                                  ; eax -= 1
+        add SIZE_T_CONTADOR, [align_value]                   ; eax += Alignment
+        not SIZE_T_CONTADOR                                  ; eax = ~eax
+        inc SIZE_T_CONTADOR                                  ; eax += 1
+        and SIZE_T_CONTADOR, [align_value]                   ; eax &= Alignment
+        dec SIZE_T_CONTADOR                                  ; eax -= 1 (final result in eax)
 
-        get_pointer SIZE_T_CONTADOR, SIZE_T_BASE
+        ;mov ax, [TOP_STACk]
+        ;sub ax, sizeof_Header_block_heap ; obtener el tamaño de los datos reservados
+        push SIZE_T_CONTADOR
+        push format_struct_padding 
+        call func_printf
+        add TOP_STACk, (__BITS__/8) * 2
+
+        get_pointer SIZE_T_CONTADOR, SIZE_T_BASE ; obtiene el pointer al siguiente bloque
         push SIZE_T_SIZE_OPERATION [SIZE_T_CONTADOR]
         push format_struct_pointer
         call func_printf
         add TOP_STACk, (__BITS__/8) * 2
 
-        get_status SIZE_T_CONTADOR, SIZE_T_BASE
+        get_status SIZE_T_CONTADOR, SIZE_T_BASE ; obtiene el estado del bloque actual
         push WORD [SIZE_T_CONTADOR]
         push format_struct_status 
         call func_printf
         add TOP_STACk, (__BITS__/8) * 2
 
+        inc TOP_STACk
+        inc TOP_STACk
         GET_OLD_STACK_FRAME
     %endif
 
@@ -190,7 +239,11 @@ section .text
         ; se guarda en DI la cantidad de memoria a reservar
         SAVE_OLD_STACK_FRAME
 
-        call .aligned_addr
+        call aligned_addr
+
+        set_status(SIZE_T_BASE, 1) ; poner que el nuevo bloque reservado esta en uso
+        call _print_debug_alloc
+
         ; se espera que el valor alineado se devuelva en SIZE_T_BASE(RBX/EBX/BX)
         ;mov SIZE_T_ACUMLADOR, [init_alloc]
         ;xor SIZE_T_ACUMLADOR, SIZE_T_ACUMLADOR
@@ -206,7 +259,7 @@ section .text
         GET_OLD_STACK_FRAME
         ret
         
-        .aligned_addr:
+        aligned_addr:
             ;   _alloc_heap_run_time(16, 24, 32....)
             ;
             ; mov value, __BITS__      (SIZE_T_DATOS[ECX])
@@ -232,26 +285,60 @@ section .text
             ;   align(12); // 12
             ;   align(16); // 16
 
+            ; reservar espacio para la estcutura en la pila
+            ; sub TOP_STACk, sizeof_Header_block_heap
+
+            ; reservar espacio para un puntero:
+            ; sub TOP_STACk, __BITS__/8
 
             %if   __BITS__ == 64
                 ; rdi tiene el valor a alinear, RSI es la direccion base
-                mov SIZE_T_BASE, RDI
-                add SIZE_T_BASE, RSI
+                add RDI, sizeof_Header_block_heap ; sumarle a la memoria a reservar, el tamaño del header block
+                mov SIZE_T_BASE, RDI ; mover la memoria a reservar al registro base
+                mov SIZE_T_CONTADOR, SIZE_T_BASE ; guardar todo antes de sumarle la direccion base
+                add SIZE_T_BASE, RSI ; sumarle la direccion base
             %elif __BITS__ == 32 || __BITS__ == 16  
                 ; se espera que el valor a alinear este en 
                 ; BASE_STACk + ((__BITS__/8) *2)
-                mov SIZE_T_BASE, [BASE_STACk + ((__BITS__/8) *2)]
-                add SIZE_T_BASE, [BASE_STACk + ((__BITS__/8) *3)]
+                mov SIZE_T_BASE, [BASE_STACk + ((__BITS__/8) *3)] ; memoria a reservar
+                add SIZE_T_BASE, sizeof_Header_block_heap ; sumarle a la memoria a reservar, el tamaño del header block
+                mov SIZE_T_CONTADOR, SIZE_T_BASE ; guardar todo antes de sumarle la direccion base
+                add SIZE_T_BASE, [BASE_STACk + ((__BITS__/8) *2)] ; sumarle la direccion base
             %endif
 
+            ; alineando
             mov SIZE_T_DATOS, __BITS__
             dec SIZE_T_DATOS
 
             add SIZE_T_BASE, SIZE_T_DATOS
             not SIZE_T_DATOS
             and SIZE_T_BASE, SIZE_T_DATOS
-            mov [counter_alloc], SIZE_T_BASE   
 
+
+            mov SIZE_T_SIZE_OPERATION [SIZE_T_BASE + Header_block_heap.size_block], SIZE_T_CONTADOR
+                                               ; poner en el header del nuevo bloque, 
+                                               ; la suma de bloque solicitado + bloque cabecera
+
+
+            push SIZE_T_BASE
+
+            mov SIZE_T_BASE, [counter_alloc]
+            cmp byte [SIZE_T_BASE + Header_block_heap.status], 1 ; si es 1, el bloque es valido
+            ; si es 0 supondremos que el bloque anterior no existe debido a que este es el
+            ; primer bloque en reserbase, o podemos suponer que el bloque anterior esta libre.
+            jne bloque_no_valido
+
+                ; si el bloque es valido entonces guarda una copia en ebx
+                mov  SIZE_T_CONTADOR, SIZE_T_BASE
+                pop  SIZE_T_BASE  ; restaurar eax
+                mov  [SIZE_T_BASE + Header_block_heap.pointer], SIZE_T_CONTADOR ; mover a pointer, ebx
+                jmp  end
+                bloque_no_valido:
+                    pop  SIZE_T_BASE
+                    mov SIZE_T_SIZE_OPERATION [SIZE_T_BASE + Header_block_heap.pointer], 0x0
+            end:
+
+            mov [counter_alloc], SIZE_T_BASE   
             ret
 
 

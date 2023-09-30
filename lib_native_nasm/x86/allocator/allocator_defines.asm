@@ -50,8 +50,10 @@
 struc Header_block_heap
     .size_block: SIZE_T_BSS 1  ; tamaño del (bloque solicitado + bloque cabecera + alineamiento)
     .pointer:    SIZE_T_BSS 1  ; puntero al siguiente bloque
-    .status:        resw    1  ; estados del bloque, 1 usado, 0 libre
+    .status:        resb    1  ; estados del bloque, 1 usado, 0 libre
 endstruc
+
+%define sizeof_Header_block_heap Header_block_heap.size_block + Header_block_heap.pointer + Header_block_heap.status
 
 %define set_size_block(addr_base, value) mov SIZE_T_SIZE_OPERATION [addr_base + Header_block_heap.size_block], value 
 %define set_pointer(addr_base, value)    mov SIZE_T_SIZE_OPERATION [addr_base + Header_block_heap.pointer   ], value
@@ -75,10 +77,13 @@ endstruc
 %endmacro
 
 ; modo largo y protegido:
+;   
+;   push eax = esp-4
+;   pop  eax = esp+4
 ;    
-;    ____________________    <--- 0xxffff
+;    ____________________    <--- 0xxffff (direcciones altas)
 ;   |        Stack       |
-;   |--------------------|   <--- ERBP/EBP/BP
+;   |--------------------|   <--- RSP/ESP/SP
 ;   |          |         |
 ;   |          v         |
 ;   |                    |
@@ -94,5 +99,5 @@ endstruc
 ;   |         data       |
 ;   |--------------------|
 ;   |         text       |
-;   |--------------------|  <--- 0x0000
+;   |--------------------|  <--- 0x0000 (direcciones baja)
 ;
