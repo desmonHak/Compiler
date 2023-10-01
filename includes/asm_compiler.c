@@ -175,6 +175,85 @@ void print_list_assembly(list_c* list){
     }
 }
 
+void stringToHex(const char *input, char *output) {
+    while (*input) {
+        sprintf(output, "%02x", *input);  // Convierte el caracter a formato hexadecimal
+        input++;
+        output += 2;  // Avanza dos posiciones en la cadena de salida
+    }
+}
+
+void convert_string_to_push_reverse(list_c* list, size_t frame, name_value *value){
+    /*
+     *
+     *  Convierte una cadena de caracteres como "hola mundo" a una secuencia
+     *  de movimientos a la pila en orden inverso:
+     * 
+     *      ; para una CPU de 64bits:
+     *      push "do"
+     *      push "hola mun" ;  64/8 bytes por movimieno a la pìla
+     * 
+     *      ; para una CPU de 32bits:
+     *      push "do"
+     *      push " mun"
+     *      push "hola"
+     * 
+     *      ; para una CPU de 16bits:
+     *      push "do"
+     *      push "un"
+     *      push " m"
+     *      push "la"
+     *      push "ho"
+     * 
+     *  De tal manera que se recibe el marco de pila actual y se calcula la direccion
+     *  en run time de la pila donde se almacenan los datos.
+     *
+     */
+    if (value->type_data != valor_string) return;
+    // si el valor no es un string finalizar
+    //list_c *list = init_list(sizeof(unsigned char*));
+    size_t size_str = strlen(value->value.string); // tamaño del string
+    unsigned char size_word = compiler_word_arch / 8; // tamaño de palabra para el que es destinada la instruccion
+    unsigned char *value_str, *instrucciones;
+    for (size_t i = 0; i < size_str; i += size_word){
+        char cadenaHex[2 * size_word + 1];
+        debug_calloc(unsigned char, value_str, 2 *size_word + 1, sizeof(unsigned char));
+        // copiar una cantidad de size_word(16, 32, 64) bytes al nuevo buffer reservado
+        memcpy(value_str, value->value.string + i, size_word);
+        stringToHex(value_str, cadenaHex); // convertir el string de caracteres, a un string con su representacion hex
+        if (i+size_word > size_str){
+            if( size_str - i == 1) {
+                instrucciones = format_intrucion("%s"ASM_MOV("byte  [BASE_STACk-0x%x]", "0x%s ; %s =  %s"), tab, i, cadenaHex, value->name, value->value);
+            } else if( size_str - i == 2){
+                instrucciones = format_intrucion("%s"ASM_MOV("word  [BASE_STACk-0x%x]", "0x%s ; %s =  %s"), tab, i, cadenaHex, value->name, value->value);
+            } else if( size_str - i <= 4){
+                instrucciones = format_intrucion("%s"ASM_MOV("dword  [BASE_STACk-0x%x]", "0x%s ; %s =  %s"), tab, i, cadenaHex, value->name, value->value);
+            } else if( size_str - i <= 8){
+                instrucciones = format_intrucion("%s"ASM_MOV("qword  [BASE_STACk-0x%x]", "0x%s ; %s =  %s"), tab, i, cadenaHex, value->name, value->value);
+            } else{
+                puts("error-?");
+                exit(1);
+            }
+        } else{
+            instrucciones = format_intrucion("%s"ASM_MOV("SIZE_T_SIZE_OPERATION  [BASE_STACk-0x%x]", "0x%s ; %s = %s"), tab, i, cadenaHex, value->name, value->value);
+        }
+        
+        printf("%s\n", instrucciones);
+        list_push(list, instrucciones);
+        /*switch (compiler_word_arch)
+        {
+        case 64:
+
+            break;
+        
+        default:
+            break;
+        }*/
+    }
+    //return list;
+
+}
+
 void asm_var_create(ast_t* node, list_c* list, size_t is_last){
     unsigned char* instrucciones = NULL;
     #ifdef DEBUG_ENABLE
@@ -197,29 +276,31 @@ void asm_var_create(ast_t* node, list_c* list, size_t is_last){
             case valor_8bits:
                 printf("<8@%hhu>\n", var->value.val8);
                 stack_frame.total_size_stack_frame += 1; // 1byte
-                instrucciones = format_intrucion("%s"ASM_PUSH("byte", "%llu"), tab, var->value.val8);
+                instrucciones = format_intrucion("%s"ASM_MOV("byte  [BASE_STACk-0x%x]", "%llu ; %s"), tab, stack_frame.total_size_stack_frame, var->value.val8, var->name);
                 break;
             case valor_16bits:
                 printf("<16@%hu>\n", var->value.val16);
                 stack_frame.total_size_stack_frame += 2; // 2byte
-                instrucciones = format_intrucion("%s"ASM_PUSH("word", "%u"), tab, var->value.val16);
+                instrucciones = format_intrucion("%s"ASM_MOV("word  [BASE_STACk-0x%x]", "%u ; %s"), tab, stack_frame.total_size_stack_frame, var->value.val16, var->name);
                 break;
             case valor_32bits:
                 printf("<32@%u>\n", var->value.val32);
                 stack_frame.total_size_stack_frame += 4; // 4byte
-                instrucciones = format_intrucion("%s"ASM_PUSH("dword", "%u"), tab, var->value.val32);
+                instrucciones = format_intrucion("%s"ASM_MOV("dword [BASE_STACk-0x%x]", "%u  ; %s"), tab, stack_frame.total_size_stack_frame, var->value.val32, var->name);
                 break;
             case valor_64bits:
                 printf("<64@%llu>\n", var->value.val64);
                 stack_frame.total_size_stack_frame += 8; // 8byte
-                instrucciones = format_intrucion("%s"ASM_PUSH("qword", "%llu"), tab, var->value.val64);
+                instrucciones = format_intrucion("%s"ASM_MOV("qword [BASE_STACk-0x%x]", "%llu ; %s"), tab, stack_frame.total_size_stack_frame, var->value.val64, var->name);
                 break;
             case valor_puntero_generico:
                 printf("<pointer@%p>\n", var->value.pointer);
                 stack_frame.total_size_stack_frame += (compiler_word_arch/8); // el tamaño de palabra al que se compila pero en byte
                 break;
             case valor_string:
-                stack_frame.total_size_stack_frame += (compiler_word_arch/8); // el tamaño de palabra al que se compila pero en byte
+                //stack_frame.total_size_stack_frame += (compiler_word_arch/8); // el tamaño de palabra al que se compila pero en byte
+                convert_string_to_push_reverse(list, stack_frame.total_size_stack_frame, var);
+                stack_frame.total_size_stack_frame += strlen(var->value.string);
                 printf("<string@'%s'>\n", var->value.string);
                 break;
             default:
@@ -292,6 +373,9 @@ void asm_funncion_etiqueta(ast_t* node, list_c* list, size_t is_last){
 list_c* convert_assembly(ast_t* ast){
     // lista donde se almacenara instrucciones asm
     list_c* list = (list_c*)init_list(sizeof(unsigned char*));
+    char *header = malloc(sizeof(char)* (strlen("%include \"base.asm\"\n") + 1));
+    strcpy(header, "%include \"base.asm\"\n");
+    list_push(list, header);
     stack_frame.stack_frame_var = (list_c*)init_list(sizeof(name_value));// inicializar la lista enlazada del stack frame
     get_tab_by_level();
 

@@ -85,7 +85,7 @@ endstruc
 
 ; modo largo y protegido:
 ;   
-;   push eax = esp-4
+;   push eax = esp-4, el ultimo valor pueso en la pila siempe esta en esp-4
 ;   pop  eax = esp+4
 ;    
 ;    ____________________    <--- 0xxffff (direcciones altas)
@@ -108,3 +108,55 @@ endstruc
 ;   |         text       |
 ;   |--------------------|  <--- 0x0000 (direcciones baja)
 ;
+
+;    
+;    ____________________    <--- 0xxffff (direcciones altas)
+;   |        frame1      |
+;   |--------------------|   
+;   |        frame2      |
+;   |--------------------| <---- ebp
+;   |        frame 3     |
+;   |____________________| <---- ebp - 4 (variable local de 4 bytes)
+;   |  varLocal1[ebp-4]  |
+;   |____________________| <---- ebp - 6 (variable local de 2 bytes)
+;   |  varLocal1[ebp-6]  |
+;   |--------------------|  
+;   |        HE AP       |
+;   |--------------------|  
+;   |         bss        |
+;   |--------------------|  
+;   |         data       |
+;   |--------------------|
+;   |         text       |
+;   |--------------------|  
+;
+ ; Contents                off ebp      off esp
+ ; caller's variables      [ebp+16]    [esp+24]
+ ; Argument 2              [ebp+12]    [esp+20]
+ ; Argument 1              [ebp+8]     [esp+16]
+ ; Caller Return Address   [ebp+4]     [esp+12]
+ ; Saved ebp               [ebp]       [esp+8]
+ ; Local variable 1        [ebp-4]     [esp+4]
+ ; Local variable 2        [ebp-8]     [esp]
+ ; 
+ ; my_sub2: ; Returns first argument
+ ;     push ebp  ; Prologue    [ebp] o [esp+8]
+ ;     mov ebp, esp
+ ;     mov eax, [ebp+8]
+ ;     mov esp, ebp  ; Epilogue
+ ;     pop ebp
+ ;     ret
+
+ function:
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 48 ; reserbar 40 bytes, + 8(de la direccion de retorno + el antiguo frame)
+                        ; variable local
+        mov     DWORD PTR [ebp-40], 1
+        mov     DWORD PTR [ebp-36], 1
+        mov     DWORD PTR [ebp-4], 1
+        mov     edx, DWORD PTR [ebp+8]
+        mov     eax, DWORD PTR [ebp+12]
+        add     eax, edx
+        leave
+        ret

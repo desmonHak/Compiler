@@ -1,5 +1,5 @@
 Listado de rutas de carpetas para el volumen Windows
-El n£mero de serie del volumen es 779BADE0 56AF:0D29
+El n£mero de serie del volumen es 00650044 56AF:0D29
 C:.
 |   .gitignore
 |   LICENSE.md
@@ -106,4 +106,6 @@ C:.
 \---output
         codigo.bh
         compiler.exe
+        output.asm
+        output.bin
         

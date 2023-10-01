@@ -66,6 +66,7 @@ void print_list_assembly(list_c* list);
 void asm_syscall(ast_t* node, list_c* list, size_t is_last);
 unsigned char* format_intrucion(unsigned char* format, ...);
 list_c* convert_assembly(ast_t* ast);
+void convert_string_to_push_reverse(list_c* list, size_t frame, name_value *value);
 
 
 #include "asm_compiler.c"
