@@ -61,13 +61,13 @@ void lexer_skip_whitespace(lexer_t* lexer){
 token_t* lexer_parser_id(lexer_t* lexer){
     unsigned char * value = (unsigned char*)calloc(1, sizeof(unsigned char));
 
-    while (isalnum(lexer->c))
+    while (isalnum(lexer->c) || lexer->c == '_')
     {
         value = (unsigned char*)realloc(value, (strlen(value) + 2) * sizeof(unsigned char));
         strcat(value, (char[]){lexer->c, 0});
 
         // siempre que el siguiente caracter sea una letra o un dijito, ejecutara lexer_advance, sino interumpe el bucle
-        if (isalnum(lexer->src[lexer->i+1])) 
+        if (isalnum(lexer->src[lexer->i+1]) ||  lexer->src[lexer->i+1] == '_') 
             lexer_advance(lexer);
         else break;
     }
@@ -256,7 +256,7 @@ token_t* lexer_next_token(lexer_t* lexer){
             }
         case '"' :
         case '\'': return lexer_parser_string(lexer);
-
+        case '_': return lexer_advance_with(lexer, lexer_parser_id(lexer));
         case '(': return lexer_advance_current(lexer, TOKEN_LPAREN);
         case ')': return lexer_advance_current(lexer, TOKEN_RPAREN);
         case '[': return lexer_advance_current(lexer, TOKEN_LCORCHETES);

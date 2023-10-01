@@ -69,7 +69,7 @@ token_t *parser_eat(parser_t *parser, unsigned int type)
     return parser->token;
 }
 
-ast_t *paser_paser_var(unsigned char *name_id, parser_t *parser)
+ast_t *paser_paser_var(unsigned char *type_data, unsigned char *name_id, parser_t *parser)
 {
 #ifdef DEBUG_ENABLE
     DEBUG_PRINT(DEBUG_LEVEL_INFO,
@@ -133,9 +133,29 @@ ast_t *paser_paser_var(unsigned char *name_id, parser_t *parser)
         {
         // si el valor es un numero constante entero
         case TOKEN_INT:
-            data->value.val64 = atoll(parser->token->value);
-            data->type_data = valor_64bits;
-
+            if (type_data == NULL || strcmp(type_data, "uint64_t") == 0 || strcmp(type_data, "int64_t") == 0 ){
+                /*
+                 *
+                 *  Si el tipo de dato no fue espeificado(tipado dinamico), u
+                 *  es de tipo uint64/int64 se guarda el valor como un entero de 64bits
+                 * 
+                 */
+                data->value.val64 = atoll(parser->token->value);
+                data->type_data = valor_64bits;
+            } else if (strcmp(type_data, "uint32_t") == 0 || strcmp(type_data, "int32_t") == 0) {
+                data->value.val32 = atol(parser->token->value);
+                data->type_data = valor_32bits;
+            }else if (strcmp(type_data, "uint16_t") == 0 || strcmp(type_data, "int16_t") == 0) {
+                data->value.val16 = atol(parser->token->value);
+                data->type_data = valor_16bits;
+            }else if (strcmp(type_data, "uint8_t") == 0 || strcmp(type_data, "int8_t") == 0) {
+                data->value.val8 = atol(parser->token->value);
+                data->type_data = valor_8bits;
+            } else {
+            DEBUG_PRINT(DEBUG_LEVEL_INFO, "tipo de dato desconocido: %s", type_data);
+            //printf("tipo de dato desconocido: %s", type_data);
+            exit(1);
+            }
             parser_eat(parser, TOKEN_INT);
             break;
         /*case TOKEN_LCORCHETES:
@@ -158,17 +178,66 @@ ast_t *paser_paser_var(unsigned char *name_id, parser_t *parser)
     return ast;
 }
 
-ast_t *parser_parser_funtion(unsigned char *name_id, parser_t *parser)
+ast_t *parser_parser_funtion_etiqueta(unsigned char *name_id, parser_t *parser)
 {
+    
+    if (parser->token->type == TOKEN_COLON)
+    {
+        // si hay dos puntos
+        parser_eat(parser, TOKEN_COLON);
+    }
 #ifdef DEBUG_ENABLE
     DEBUG_PRINT(DEBUG_LEVEL_INFO,
                 INIT_TYPE_FUNC_DBG(ast_t *, parser_parser_funtion)
-                    TYPE_DATA_DBG(unsigned char *, "name_id = %p")
+                    TYPE_DATA_DBG(unsigned char *, "name_id = %s")
                         TYPE_DATA_DBG(parser_t *, "parser = %p")
                             END_TYPE_FUNC_DBG,
                 name_id, parser);
 #endif
-    return init_ast(AST_NOOP);
+    ast_t *ast = init_ast(AST_FUNC_ETIQUETA);
+    ast->name = name_id;
+    ast->value = parser_parser_expr(parser); // hacer una nueva rama del ast que contendra los nodos ast para la funcion
+    return ast;
+}
+ast_t *parser_parser_funtion(unsigned char *name_id, parser_t *parser)
+{
+    
+    if (parser->token->type == TOKEN_COLON)
+    {
+        // si hay dos puntos
+        parser_eat(parser, TOKEN_COLON);
+    }
+#ifdef DEBUG_ENABLE
+    DEBUG_PRINT(DEBUG_LEVEL_INFO,
+                INIT_TYPE_FUNC_DBG(ast_t *, parser_parser_funtion)
+                    TYPE_DATA_DBG(unsigned char *, "name_id = %s")
+                        TYPE_DATA_DBG(parser_t *, "parser = %p")
+                            END_TYPE_FUNC_DBG,
+                name_id, parser);
+#endif
+    ast_t *ast = init_ast(AST_FUNC);
+    ast->name = name_id;
+    ast->value = parser_parser_expr(parser); // hacer una nueva rama del ast que contendra los nodos ast para la funcion
+    return ast;
+}
+
+
+bool is_type_data(unsigned char *type) {
+    if (
+        ( strcmp(type, "uint8_t") == 0 )  ||
+        ( strcmp(type, "uint16_t") == 0 ) ||
+        ( strcmp(type, "uint32_t") == 0 ) ||
+        ( strcmp(type, "uint64_t") == 0 ) ||
+        ( strcmp(type, "int8_t") == 0 )   ||
+        ( strcmp(type, "int16_t") == 0 )  ||
+        ( strcmp(type, "int32_t") == 0 )  ||
+        ( strcmp(type, "int64_t") == 0 )  ||
+        ( strcmp(type, "string") == 0 )   ||
+        ( strcmp(type, "char") == 0 )     ||
+        ( strcmp(type, "float") == 0 )    ||
+        ( strcmp(type, "bool") == 0 )  
+    ) return true;
+    return false;
 }
 
 ast_t *parser_parser_id(parser_t *parser)
@@ -187,16 +256,31 @@ ast_t *parser_parser_id(parser_t *parser)
      *  y avanza al siguiente token.
      *
      */
-    ast_t *ast = NULL;
-    unsigned char *name_id = parser->token->value;
+    //ast_t *ast = NULL;
+
+    unsigned char *name_id = NULL, *type_data = NULL;
+
+    if (is_type_data(parser->token->value)){
+        // si el ID coincide con el nombre de algun tipo de dato
+        type_data = parser->token->value;
+        parser_eat(parser, TOKEN_ID);
+    }
+    name_id = parser->token->value;
     parser_eat(parser, TOKEN_ID);
 
     switch (parser->token->type)
     {
+    
+        
+    case TOKEN_ID:
     case TOKEN_ASIGNACION:
-        return paser_paser_var(name_id, parser);
+        // type_data == NULL se desconoce el tipo de dato
+        // type_data != NULL se conoce el tipo de dato
+        return paser_paser_var(type_data, name_id, parser);
     case TOKEN_LPAREN:
         return parser_parser_funtion(name_id, parser);
+    case TOKEN_COLON:
+        return parser_parser_funtion_etiqueta(name_id, parser);
     default:
         DEBUG_PRINT(DEBUG_LEVEL_INFO, "No se esperaba este token %s", token_to_str(parser->token));
         exit(1);
@@ -562,6 +646,10 @@ void print_ast_recursive(ast_t *node, int indent, int is_last_child)
         break;
     case AST_VALUE:
         printf("Value(%p)\n", node->value);
+        break;
+    case AST_FUNC_ETIQUETA:
+        printf("Name funcion: %s\n", node->name );
+        printf("Pointer Node AST: %p\n", node->value);
         break;
     case AST_VAR:
         for (unsigned char i = 0; i < node->data_almacenada.nombre_valor->size; i++)

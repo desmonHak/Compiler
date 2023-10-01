@@ -55,9 +55,16 @@ endstruc
 
 %define sizeof_Header_block_heap Header_block_heap.size_block + Header_block_heap.pointer + Header_block_heap.status
 
-%define set_size_block(addr_base, value) mov SIZE_T_SIZE_OPERATION [addr_base + Header_block_heap.size_block], value 
-%define set_pointer(addr_base, value)    mov SIZE_T_SIZE_OPERATION [addr_base + Header_block_heap.pointer   ], value
-%define set_status(addr_base, value)     mov WORD                  [addr_base + Header_block_heap.status    ], value 
+%macro set_size_block 2
+    mov SIZE_T_SIZE_OPERATION [%1 + Header_block_heap.size_block], %2 
+%endmacro
+%macro set_pointer 2
+    mov SIZE_T_SIZE_OPERATION [%1 + Header_block_heap.pointer], %2 
+%endmacro
+%macro set_status 2
+    mov byte [%1 + Header_block_heap.status], %2 
+%endmacro
+
 %macro get_size_block 2
     lea %1, [%2 + Header_block_heap.size_block]
 %endmacro
@@ -93,7 +100,7 @@ endstruc
 ;   |          |         |
 ;   |--------------------|  <- brk (program break)
 ;   |        HE AP       |
-;   |--------------------|  <- __bss_end
+;   |--------------------|  <- __bss_end 
 ;   |         bss        |
 ;   |--------------------|  <- __bss_start
 ;   |         data       |

@@ -29,6 +29,17 @@
  ;	modificado.
  ;
 
+
+%if   __BITS__ == 64
+[BITS 64]
+
+%elif __BITS__ == 32
+[BITS 32]
+%elif __BITS__ == 16  
+[BITS 16]
+%endif
+
+
 %include "allocator_defines.asm"
 
 %if __BITS__ == 32 || __BITS__ == 64
@@ -48,6 +59,9 @@ section .bss
     __bss_end resb 1
     %endif
 
+global init_bss
+global end_bss
+global init_alloc
 section .data
     init_bss      SIZE_T_DATA __bss_start ; inicio de bss
     end_bss       SIZE_T_DATA __bss_end   ; final de bss
@@ -72,190 +86,98 @@ section .data
     %endif
 %endif
 
-%if   __BITS__ == 64
-%elif __BITS__ == 32
-section .text
-    global func_WinMain
-    func_WinMain:
-        SAVE_OLD_STACK_FRAME
 
+section .text
+    %if   __BITS__ == 64
+        global init_allocator
+        init_allocator:
+    %elif __BITS__ == 32
+    global _init_allocator
+    _init_allocator:
+    %define init_allocator _init_allocator
+
+        SAVE_OLD_STACK_FRAME
         mov byte [__bss_start], 0xff
         mov byte [__bss_end],   0xff
 
         cmp SIZE_T_SIZE_OPERATION [counter_alloc], 0x0
         jne is_not_zero
 
-            mov SIZE_T_BASE, align_value
+            ;mov SIZE_T_BASE, align_value
 
-            mov SIZE_T_DATOS, __BITS__
-            dec SIZE_T_DATOS
+            ;mov SIZE_T_DATOS, __BITS__
+            ;dec SIZE_T_DATOS
 
-            add SIZE_T_BASE, SIZE_T_DATOS
+            ;add SIZE_T_BASE, SIZE_T_DATOS
+            ;not SIZE_T_DATOS
+            ;and SIZE_T_BASE, SIZE_T_DATOS
+            
+
+            lea SIZE_T_BASE, [align_value + __BITS__ - 1]
+            mov SIZE_T_DATOS, (__BITS__ - 1)
             not SIZE_T_DATOS
             and SIZE_T_BASE, SIZE_T_DATOS
+
             mov [align_value], SIZE_T_BASE
 
+            ;mov SIZE_T_BASE, init_alloc
 
-            mov SIZE_T_BASE, init_alloc
+            ;mov SIZE_T_DATOS, __BITS__
+            ;dec SIZE_T_DATOS
 
-            mov SIZE_T_DATOS, __BITS__
-            dec SIZE_T_DATOS
+            ;add SIZE_T_BASE, SIZE_T_DATOS
+            ;not SIZE_T_DATOS
+            ;and SIZE_T_BASE, SIZE_T_DATOS
 
-            add SIZE_T_BASE, SIZE_T_DATOS
+            lea SIZE_T_BASE, [init_alloc + __BITS__ - 1]
+            mov SIZE_T_DATOS, (__BITS__ - 1)
             not SIZE_T_DATOS
             and SIZE_T_BASE, SIZE_T_DATOS
+
 
             mov SIZE_T_SIZE_OPERATION [init_alloc], SIZE_T_BASE
             mov [counter_alloc], SIZE_T_BASE
-            set_status(SIZE_T_BASE, 0)
-
-        is_not_zero: ; si fue 0 (init alloc no se alineo)
-
-
-        %ifdef DEBUG_ENABLE
-        push SIZE_T_SIZE_OPERATION [init_bss]
-        push format_init_bss 
-        call func_printf
-    
-        ; sumar al tope de la pila el tamaño de palabra *2
-        ; de los dos push's para restaurar la pila
-        add TOP_STACk, (__BITS__/8) * 2
-
-        push SIZE_T_SIZE_OPERATION [end_bss]
-        push format_end_bss 
-        call func_printf
-        add TOP_STACk, (__BITS__/8) * 2
-
-        push SIZE_T_SIZE_OPERATION [init_alloc]
-        push format_init_alloc 
-        call func_printf
-        add TOP_STACk, (__BITS__/8) * 2
-
-        push TOP_STACk
-        push format_esp 
-        call func_printf
-        add TOP_STACk, (__BITS__/8) * 2
-    
-        push BASE_STACk
-        push format_ebp 
-        call func_printf
-        add TOP_STACk, (__BITS__/8) * 2
-        %endif
-
-        push 5                                  ; memoria a reservar
-        push SIZE_T_SIZE_OPERATION [counter_alloc] ; direccion base a usar
-        call _alloc_heap_run_time
-        push SIZE_T_ACUMLADOR
-        push format_memresever 
-        call func_printf
-        add TOP_STACk, (__BITS__/8) * 2
-
-        push 10                            ; memoria a reservar
-        push SIZE_T_SIZE_OPERATION [counter_alloc] ; direccion base a usar
-        call _alloc_heap_run_time
-        push SIZE_T_ACUMLADOR
-        push format_memresever 
-        call func_printf
-        add TOP_STACk, (__BITS__/8) * 2
-
-
-        sub esp, 2 * Header_block_heap
-        ; Accede a las estructuras a través de ESP
-
-        mov SIZE_T_BASE, [esp + (Header_block_heap * 0)]                         
-        set_size_block(SIZE_T_BASE, 0xfb)    
-        set_pointer(SIZE_T_BASE, 0xfa)
-        set_status(SIZE_T_BASE, 0xfc)
-        call _print_debug_alloc
-
-        mov SIZE_T_BASE, [esp + (Header_block_heap * 1)] ; Accede a la segunda estructura
-        create_struct_Header_block_heap SIZE_T_BASE, 0xab, 0xaa, 0xac
-        call _print_debug_alloc
-
-        push 0
-        call _exit
-%elif __BITS__ == 16  
-%endif
-
-
-    %ifdef DEBUG_ENABLE
-    global _print_debug_alloc
-    _print_debug_alloc:
-        ; el registro base(SIZE_T_BASE) tiene la direccion a la estructura a imprimir
-        SAVE_OLD_STACK_FRAME
-
-        sub TOP_STACk, 2
-
-        ; obtiene la direccion del miembro y lo coloca en SIZE_T_CONTADOR
-        push AX
-        get_size_block SIZE_T_CONTADOR, SIZE_T_BASE ; obtiene el size block
-        mov AX, [SIZE_T_CONTADOR]
-        mov uint16_t [TOP_STACk+2], AX ; guarda el size block en la pila;
-        pop AX
-        push SIZE_T_SIZE_OPERATION [SIZE_T_CONTADOR]
-        push format_struct_size_block 
-        call func_printf
-        add TOP_STACk, (__BITS__/8) * 2
-        
-        mov SIZE_T_CONTADOR, [TOP_STACk]                     ; eax = MemoryAddress
-        add SIZE_T_CONTADOR, sizeof_Header_block_heap        ; eax += HeaderSize
-        dec SIZE_T_CONTADOR                                  ; eax -= 1
-        add SIZE_T_CONTADOR, [align_value]                   ; eax += Alignment
-        not SIZE_T_CONTADOR                                  ; eax = ~eax
-        inc SIZE_T_CONTADOR                                  ; eax += 1
-        and SIZE_T_CONTADOR, [align_value]                   ; eax &= Alignment
-        dec SIZE_T_CONTADOR                                  ; eax -= 1 (final result in eax)
-
-        ;mov ax, [TOP_STACk]
-        ;sub ax, sizeof_Header_block_heap ; obtener el tamaño de los datos reservados
-        push SIZE_T_CONTADOR
-        push format_struct_padding 
-        call func_printf
-        add TOP_STACk, (__BITS__/8) * 2
-
-        get_pointer SIZE_T_CONTADOR, SIZE_T_BASE ; obtiene el pointer al siguiente bloque
-        push SIZE_T_SIZE_OPERATION [SIZE_T_CONTADOR]
-        push format_struct_pointer
-        call func_printf
-        add TOP_STACk, (__BITS__/8) * 2
-
-        get_status SIZE_T_CONTADOR, SIZE_T_BASE ; obtiene el estado del bloque actual
-        push WORD [SIZE_T_CONTADOR]
-        push format_struct_status 
-        call func_printf
-        add TOP_STACk, (__BITS__/8) * 2
-
-        inc TOP_STACk
-        inc TOP_STACk
-        GET_OLD_STACK_FRAME
+            set_status SIZE_T_BASE, 0
+        is_not_zero:
+            GET_OLD_STACK_FRAME
     %endif
+
 
 
 ; x64 -> C Calling Convention
 ;   funtion(RDI, RSI, DRX, RCX, R8, R9)
 
-    global _malloc_heap_run_time
-    _alloc_heap_run_time:
+    %if   __BITS__ == 64
+        global alloc_heap_run_time
+        alloc_heap_run_time:
+    %elif __BITS__ == 32
+        global _alloc_heap_run_time
+        _alloc_heap_run_time:
+        %define alloc_heap_run_time _alloc_heap_run_time
+    %endif
         ; se guarda en DI la cantidad de memoria a reservar
         SAVE_OLD_STACK_FRAME
 
         call aligned_addr
 
-        set_status(SIZE_T_BASE, 1) ; poner que el nuevo bloque reservado esta en uso
-        call _print_debug_alloc
+        set_status SIZE_T_BASE, 1 ; poner que el nuevo bloque reservado esta en uso
 
-        ; se espera que el valor alineado se devuelva en SIZE_T_BASE(RBX/EBX/BX)
-        ;mov SIZE_T_ACUMLADOR, [init_alloc]
-        ;xor SIZE_T_ACUMLADOR, SIZE_T_ACUMLADOR
-        ;add SIZE_T_ACUMLADOR, SIZE_T_BASE
         %ifdef DEBUG_ENABLE
             push SIZE_T_BASE
             push format_counter_alloc 
             call func_printf
         %endif         
-        mov SIZE_T_ACUMLADOR, SIZE_T_BASE
-        
 
+        %ifdef DEBUG_ENABLE
+            call _print_debug_alloc
+        %endif         
+
+        ; se espera que el valor alineado se devuelva en SIZE_T_BASE(RBX/EBX/BX)
+        ;mov SIZE_T_ACUMLADOR, [init_alloc]
+        ;xor SIZE_T_ACUMLADOR, SIZE_T_ACUMLADOR
+        ;add SIZE_T_ACUMLADOR, SIZE_T_BASE
+
+        mov SIZE_T_ACUMLADOR, SIZE_T_BASE
         GET_OLD_STACK_FRAME
         ret
         
@@ -307,13 +229,17 @@ section .text
             %endif
 
             ; alineando
-            mov SIZE_T_DATOS, __BITS__
-            dec SIZE_T_DATOS
+            ;mov SIZE_T_DATOS, __BITS__
+            ;dec SIZE_T_DATOS
 
-            add SIZE_T_BASE, SIZE_T_DATOS
+            ;add SIZE_T_BASE, SIZE_T_DATOS
+            ;not SIZE_T_DATOS
+            ;and SIZE_T_BASE, SIZE_T_DATOS
+
+            lea SIZE_T_BASE, [SIZE_T_BASE + __BITS__ - 1]
+            mov SIZE_T_DATOS, (__BITS__ - 1)
             not SIZE_T_DATOS
             and SIZE_T_BASE, SIZE_T_DATOS
-
 
             mov SIZE_T_SIZE_OPERATION [SIZE_T_BASE + Header_block_heap.size_block], SIZE_T_CONTADOR
                                                ; poner en el header del nuevo bloque, 
@@ -342,4 +268,133 @@ section .text
             ret
 
 
+
+    %ifdef DEBUG_ENABLE
+    global func_WinMain
+    func_WinMain:
+        SAVE_OLD_STACK_FRAME
+
+        call init_allocator
         
+        push SIZE_T_SIZE_OPERATION [init_bss]
+        push format_init_bss 
+        call func_printf
+    
+        ; sumar al tope de la pila el tamaño de palabra *2
+        ; de los dos push's para restaurar la pila
+        ; add TOP_STACk, (__BITS__/8) * 2
+
+        push SIZE_T_SIZE_OPERATION [end_bss]
+        push format_end_bss 
+        call func_printf
+
+
+        push SIZE_T_SIZE_OPERATION [init_alloc]
+        push format_init_alloc 
+        call func_printf
+
+
+        push TOP_STACk
+        push format_esp 
+        call func_printf
+
+    
+        push BASE_STACk
+        push format_ebp 
+        call func_printf
+
+        
+
+        push 5                                  ; memoria a reservar
+        push SIZE_T_SIZE_OPERATION [counter_alloc] ; direccion base a usar
+        call alloc_heap_run_time
+        push SIZE_T_ACUMLADOR
+        push format_memresever 
+        call func_printf
+
+
+        push 10                            ; memoria a reservar
+        push SIZE_T_SIZE_OPERATION [counter_alloc] ; direccion base a usar
+        call alloc_heap_run_time
+        push SIZE_T_ACUMLADOR
+        push format_memresever 
+        call func_printf
+
+
+
+        sub esp, 2 * Header_block_heap
+        ; Accede a las estructuras a través de ESP
+
+        mov SIZE_T_BASE, [esp + (Header_block_heap * 0)]                         
+        set_size_block SIZE_T_BASE, 0xfb
+        set_pointer SIZE_T_BASE, 0xfa
+        set_status SIZE_T_BASE, 0xfc
+        call _print_debug_alloc
+
+        mov SIZE_T_BASE, [esp + (Header_block_heap * 1)] ; Accede a la segunda estructura
+        create_struct_Header_block_heap SIZE_T_BASE, 0xab, 0xaa, 0xac
+        call _print_debug_alloc
+
+        push 0
+        call func_exit
+        %endif
+
+%if   __BITS__ == 64
+%elif __BITS__ == 32
+%elif __BITS__ == 16  
+%endif
+
+
+    %ifdef DEBUG_ENABLE
+    global _print_debug_alloc
+    _print_debug_alloc:
+        ; el registro base(SIZE_T_BASE) tiene la direccion a la estructura a imprimir
+        SAVE_OLD_STACK_FRAME
+
+        sub TOP_STACk, 2
+
+        ; obtiene la direccion del miembro y lo coloca en SIZE_T_CONTADOR
+        push AX
+        get_size_block SIZE_T_CONTADOR, SIZE_T_BASE ; obtiene el size block
+        mov AX, [SIZE_T_CONTADOR]
+        mov uint16_t [TOP_STACk+2], AX ; guarda el size block en la pila;
+        pop AX
+        push SIZE_T_SIZE_OPERATION [SIZE_T_CONTADOR]
+        push format_struct_size_block 
+        call func_printf
+        add TOP_STACk, (__BITS__/8) * 2
+        
+        mov SIZE_T_CONTADOR, [TOP_STACk]                     ; eax = MemoryAddress
+        add SIZE_T_CONTADOR, sizeof_Header_block_heap        ; eax += HeaderSize
+        dec SIZE_T_CONTADOR                                  ; eax -= 1
+        add SIZE_T_CONTADOR, [align_value]                   ; eax += Alignment
+        not SIZE_T_CONTADOR                                  ; eax = ~eax
+        inc SIZE_T_CONTADOR                                  ; eax += 1
+        and SIZE_T_CONTADOR, [align_value]                   ; eax &= Alignment
+        dec SIZE_T_CONTADOR                                  ; eax -= 1 (final result in eax)
+
+
+        ;mov ax, [TOP_STACk]
+        ;sub ax, sizeof_Header_block_heap ; obtener el tamaño de los datos reservados
+        push SIZE_T_CONTADOR
+        push format_struct_padding 
+        call func_printf
+        add TOP_STACk, (__BITS__/8) * 2
+
+        get_pointer SIZE_T_CONTADOR, SIZE_T_BASE ; obtiene el pointer al siguiente bloque
+        push SIZE_T_SIZE_OPERATION [SIZE_T_CONTADOR]
+        push format_struct_pointer
+        call func_printf
+        add TOP_STACk, (__BITS__/8) * 2
+
+        get_status SIZE_T_CONTADOR, SIZE_T_BASE ; obtiene el estado del bloque actual
+        push WORD [SIZE_T_CONTADOR]
+        push format_struct_status 
+        call func_printf
+        add TOP_STACk, (__BITS__/8) * 2
+
+        inc TOP_STACk
+        inc TOP_STACk
+        GET_OLD_STACK_FRAME
+    %endif
+

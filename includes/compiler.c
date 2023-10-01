@@ -69,16 +69,20 @@ void compile_file(name_file name_file_open){
 
     printf("El archivo(%s)\n", name_file_open);
     unsigned char text[] = 
+        "_start:" 
         "#syscall[ \
             eax = 1, \
             ebx = 2, \
             ecx = 3,  \
             .int = 0x80 \
         ]" \
+        "_new:"
         "#syscall(1,2,3, )" 
         "%syscall(32,333,35)"
         "var = 'hola mundo'"
-        "var = 1";
+        "var = 20"
+        "uint8_t variable = 10"
+        ;
 
     #include "crypt/md5.h"
     unsigned char hash[16];

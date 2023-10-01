@@ -42,5 +42,31 @@
 
 #include "x86/assembly.h"
 
+static uint16_t tab_level = 0;         // nivel de tabulacion
+static char* tab = NULL;               // puntero a las tabulaciones
+typedef struct stack_frame_c
+{
+    size_t total_size_stack_frame; // tamaño total de todo el frame
+    list_c* stack_frame_var;       // variables almacenadas en el frame
+                                   // los datos de la lista enlazada son de tipo
+                                   // name_value
+} stack_frame_c;
+static stack_frame_c stack_frame = {
+    .stack_frame_var = NULL,
+    .total_size_stack_frame = 0
+};
+
+; // puntero al stack frame actual
+
+void add_stack_frame_and_resize(char *name, size_t byte);
+ 
+list_c* get_list_assembly(ast_t* node, list_c* list, size_t is_last);
+void asm_funncion_etiqueta(ast_t* node, list_c* list, size_t is_last);
+void print_list_assembly(list_c* list);
+void asm_syscall(ast_t* node, list_c* list, size_t is_last);
+unsigned char* format_intrucion(unsigned char* format, ...);
+list_c* convert_assembly(ast_t* ast);
+
+
 #include "asm_compiler.c"
 #endif

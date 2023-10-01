@@ -1,12 +1,13 @@
 Listado de rutas de carpetas para el volumen Windows
-El nï¿½mero de serie del volumen es 00650044 56AF:0D29
+El n£mero de serie del volumen es 779BADE0 56AF:0D29
 C:.
 |   .gitignore
+|   LICENSE.md
 |   Makefile
 |   README.md
 |   tree_files.txt
 |   
-+---.vscode 
++---.vscode
 |       c_cpp_properties.json
 |       settings.json
 |       tasks.json
@@ -89,13 +90,19 @@ C:.
 +---lib_native_nasm
 |   +---arm
 |   \---x86
-|           base.asm
-|           linux32.asm
-|           linux64.asm
-|           windows32.asm
-|           windows64.asm
-|           win_const.asm
-|           
+|       |   base.asm
+|       |   linux32.asm
+|       |   linux64.asm
+|       |   windows32.asm
+|       |   windows64.asm
+|       |   win_const.asm
+|       |   
+|       \---allocator
+|               allocator_defines.asm
+|               allocator_heap.asm
+|               allocator_heap.exe
+|               allocator_heap.o
+|               
 \---output
         codigo.bh
         compiler.exe

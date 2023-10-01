@@ -124,8 +124,9 @@ typedef struct  AST_STRUCT
         AST_NOOP,                // no requiere una operacion
         AST_VALUE,               // para valores enteros constantes
         AST_VAR,                 // para variables
-        AST_END                  // final del ast
-        
+        AST_END,                 // final del ast
+        AST_FUNC_ETIQUETA,       // para etiquetas como _start
+        AST_FUNC,                // para funciones
     } type;
     list_c *children;
     char* name;
