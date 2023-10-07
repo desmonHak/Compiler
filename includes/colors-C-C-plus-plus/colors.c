@@ -363,7 +363,7 @@ void vprintf_color(const char *format, va_list args)
                 {
                     sizes_num num;
 
-                    if (sscanf(color_code, "i64:%llu", &num.i64))
+                    if (sscanf(color_code, "i64:%"PRIu64, &num.i64))
                     {
                         print_sizes_num(num, 64);
                     }
@@ -371,7 +371,7 @@ void vprintf_color(const char *format, va_list args)
                 else if (strncmp(color_code, "i32:", 4) == 0)
                 {
                     sizes_num num;
-                    if (sscanf(color_code, "i32:%u", &num.i32))
+                    if (sscanf(color_code, "i32:%"SCNu32, &num.i32))
                     {
                         print_sizes_num(num, 32);
                     }

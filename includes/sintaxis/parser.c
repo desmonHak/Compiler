@@ -60,6 +60,9 @@ token_t *parser_eat(parser_t *parser, unsigned int type)
      *  Si es el token esperado avanza el lexerr al siguiente token
      *
      */
+    while(parser->token->type == TOKEN_SPACE) parser->token = lexer_next_token(parser->lexer);
+    if (TOKEN_SPACE == parser->token->type ) return parser->token;
+    if (TOKEN_SPACE == type && parser->token->type != type) return parser->token;
     if (parser->token->type != type)
     {
         printf("[Parser]: Token no esperado: %s, se esperaba un: %s \n", token_to_str(parser->token), token_type_to_str(type));
@@ -446,6 +449,7 @@ ast_t *parser_parser_macro_syscall(parser_t *parser)
                 continue;
             }
 
+            //volver:
             if (parser->token->type != TOKEN_REGISTRO)
             {
                 /*
@@ -455,6 +459,12 @@ ast_t *parser_parser_macro_syscall(parser_t *parser)
                  *  motivo los siguientes a este no seguian el formato,
                  *
                  */
+                /*if (parser->token->type == TOKEN_SPACE) {
+                    // si se trataba de un espacio el token, se elimina y se vuelve atras
+                    parser_eat(parser, TOKEN_SPACE);
+                    goto volver;
+                }*/
+
                 // printf("%s\n",token_to_str(lexer_next_token(parser->lexer)));
                 if (parser->token->type == TOKEN_COMMA)
                     printf_color("#{FG:lwhite}[#{FG:lred}Sintax error#{FG:lwhite}]#{FG:reset} : en #{FG:lred}%d#{FG:reset}, no se a expecificado un registro -> #{FG:lyellow}%s#{FG:reset}\n", parser->lexer->i, parser->token->value);
@@ -528,7 +538,7 @@ ast_t *parser_parser_macro_syscall(parser_t *parser)
                     exit(1);
                 }
                 list_push(ast->data_almacenada.nombre_valor, data);
-                printf("registro numero %s -> value = %llu\n", data->name, data->value.val64);
+                printf("registro numero %s -> value = %"PRIu64"\n", data->name, data->value.val64);
 
                 if (parser->token->type == TOKEN_INT)
                     parser_eat(parser, TOKEN_INT);
@@ -567,6 +577,36 @@ ast_t *parser_parser_macro_syscall(parser_t *parser)
 
     // printf("%s\n", parser->token->value);
 
+    return ast;
+}
+
+ast_t *parser_parser_macro_entry_point(parser_t *parser){
+    #ifdef DEBUG_ENABLE
+        DEBUG_PRINT(DEBUG_LEVEL_INFO,
+                    INIT_TYPE_FUNC_DBG(ast_t *, parser_parser_macro_entry_point)
+                        TYPE_DATA_DBG(parser_t *, "parser = %p")
+                            END_TYPE_FUNC_DBG,
+                    parser);
+    #endif
+    ast_t *ast = init_ast(AST_ENTRY_POINT);
+    parser_eat(parser, TOKKEN_MACRO_ENTRY_POINT);
+    ast->name = parser->token->value;
+    parser_eat(parser, TOKEN_ID);
+    return ast;
+}
+
+ast_t *parser_parser_word_size(parser_t *parser){
+    #ifdef DEBUG_ENABLE
+        DEBUG_PRINT(DEBUG_LEVEL_INFO,
+                    INIT_TYPE_FUNC_DBG(ast_t *, parser_parser_word_size)
+                        TYPE_DATA_DBG(parser_t *, "parser = %p")
+                            END_TYPE_FUNC_DBG,
+                    parser);
+    #endif
+    ast_t *ast = init_ast(AST_WORD_SIZE);
+    parser_eat(parser, TOKKEN_MACRO_WORD_SIZE);
+    compiler_word_arch = atol(parser->token->value);
+    parser_eat(parser, TOKEN_INT);
     return ast;
 }
 
@@ -620,7 +660,7 @@ void print_ast_recursive(ast_t *node, int indent, int is_last_child)
             }
             else if (compiler_word_arch == 32)
             {
-                printf("[%d] %s = %u\n", i, values->name, values->value.val32);
+                printf("[%d] %s = %"SCNu32"\n", i, values->name, values->value.val32);
             }
             else if (compiler_word_arch == 16)
             {
@@ -651,6 +691,12 @@ void print_ast_recursive(ast_t *node, int indent, int is_last_child)
         printf("Name funcion: %s\n", node->name );
         printf("Pointer Node AST: %p\n", node->value);
         break;
+    case AST_WORD_SIZE:
+        printf("set word size to: %hhu\n", compiler_word_arch );
+        break;
+    case AST_ENTRY_POINT:
+        printf("punto de entrada establecido en %s\n", node->name);
+        break;
     case AST_VAR:
         for (unsigned char i = 0; i < node->data_almacenada.nombre_valor->size; i++)
         {
@@ -665,10 +711,10 @@ void print_ast_recursive(ast_t *node, int indent, int is_last_child)
                 printf("<16@%hu>\n", var->value.val16);
                 break;
             case valor_32bits:
-                printf("<32@%u>\n", var->value.val32);
+                printf("<32@%"SCNu32">\n", var->value.val32);
                 break;
             case valor_64bits:
-                printf("<64@%llu>\n", var->value.val64);
+                printf("<64@%"PRIu64">\n", var->value.val64);
                 break;
             case valor_puntero_generico:
                 printf("<pointer@%p>\n", var->value.pointer);
@@ -730,25 +776,38 @@ ast_t *parser_parser_expr(parser_t *parser)
      *  Esta funcion analiza una expresion y llama a una funcion de analisis.
      *
      */
+    printf("Token %s\n", token_to_str(parser->token));
     switch (parser->token->type)
     {
-    case TOKEN_ID:
-        return parser_parser_id(parser);
-    // case TOKEN_LPAREN:          return parser_parser_list(parser);
-    /*case TOKEN_RPAREN:
-        parser_eat(parser, TOKEN_RPAREN);
-        return init_ast(AST_NOOP);*/
-    case TOKKEN_MACRO_SYSCALL:
-        return parser_parser_macro_syscall(parser);
-    case TOKEN_INT:
-        return parser_parser_int(parser);
-    // case TOKEN_COMMA:           return init_ast(AST_NOOP);
-    case TOKEN_EOF:
-    default:
-        return init_ast(AST_END);
-        printf("[Parser]: Se esperaba un token %s\n", token_to_str(parser->token));
-        exit(1);
+        case TOKEN_ID:
+            return parser_parser_id(parser);
+        // case TOKEN_LPAREN:          return parser_parser_list(parser);
+        /*case TOKEN_RPAREN:
+            parser_eat(parser, TOKEN_RPAREN);
+            return init_ast(AST_NOOP);*/
+        case TOKEN_SPACE:
+            parser_eat(parser, TOKEN_SPACE);
+        case TOKEN_NEW_LINE:
+            parser_eat(parser, TOKEN_NEW_LINE);
+            return init_ast(AST_NOOP);
+        case TOKKEN_MACRO_SYSCALL:
+            return parser_parser_macro_syscall(parser);
+        case TOKEN_INT:
+            return parser_parser_int(parser);
+        // case TOKEN_COMMA:           return init_ast(AST_NOOP);
+        case TOKEN_EOF:
+            return init_ast(AST_END);
+            puts("Token EOF");
+        case TOKKEN_MACRO_ENTRY_POINT:
+            return parser_parser_macro_entry_point(parser);
+        case TOKKEN_MACRO_WORD_SIZE:
+            return parser_parser_word_size(parser);
+        default:
+            printf("[Parser]: Se esperaba un token %s\n", token_to_str(parser->token));
+            exit(1);
     }
+    // solo se ejecuta si se finaliza el switch
+    return parser_parser_expr(parser);
 }
 
 ast_t *parser_parser_compound(parser_t *parser)
@@ -774,7 +833,7 @@ ast_t *parser_parser(parser_t *parser)
 {
 #ifdef DEBUG_ENABLE
     DEBUG_PRINT(DEBUG_LEVEL_INFO,
-                INIT_TYPE_FUNC_DBG(ast_t *, parser_parser_compound)
+                INIT_TYPE_FUNC_DBG(ast_t *, parser_parser)
                     TYPE_DATA_DBG(parser_t *, "parser = %p")
                         END_TYPE_FUNC_DBG,
                 parser);

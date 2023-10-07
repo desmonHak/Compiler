@@ -54,7 +54,8 @@ void lexer_advance(lexer_t* lexer){
 void lexer_skip_whitespace(lexer_t* lexer){
     // si la posicion antual es alguno de estos caracteres " \t\r\n"
     // saltar al siguiente caracter
-    while (lexer->c == '\r' || lexer->c == '\n' || lexer->c == ' ' || lexer->c == '\t')
+    //while (lexer->c == '\r' || lexer->c == '\n' || lexer->c == ' ' || lexer->c == '\t')
+    while (lexer->c == '\r' || lexer->c == '\t')
         lexer_advance(lexer);
 }
 
@@ -102,7 +103,7 @@ token_t* lexer_advance_with_junp(lexer_t* lexer, token_t* token, unsigned int of
 }
 
 unsigned char lexer_peek(lexer_t* lexer, unsigned int offset){
-    //printf("min -> %d\n", MIN(lexer->i + offset, lexer->src_size));
+    //printf("min -> %"PRIu64"\n", MIN(lexer->i + offset, lexer->src_size));
     return lexer->src[MIN(lexer->i + offset, lexer->src_size)];
 }
 
@@ -204,7 +205,7 @@ void print_tokents(lexer_t* lexer){
 
 
 token_t* lexer_next_token(lexer_t* lexer){
-    
+    volver:
     while (lexer->c != '\0')
     {
         lexer_skip_whitespace(lexer);
@@ -249,6 +250,10 @@ token_t* lexer_next_token(lexer_t* lexer){
                     return lexer_advance_with_junp(lexer, init_token("#syscall", TOKKEN_MACRO_SYSCALL), 8); // avanza luego 9 posiciones
                 case 'd':
                     return lexer_advance_with_junp(lexer, init_token("#define", TOKKEN_MACRO_DEFINE), 7); // avanza luego 8 posiciones
+                case 'w':
+                    return lexer_advance_with_junp(lexer, init_token("#word_size", TOKKEN_MACRO_WORD_SIZE), 10); // avanza luego 8 posiciones
+                case 'e':
+                    return lexer_advance_with_junp(lexer, init_token("#entry_point", TOKKEN_MACRO_ENTRY_POINT), 12); // avanza luego 13 posiciones
                 default:
                     puts("que podra ser");
                     return lexer_advance_current(lexer, TOKKEN_MACRO_DEFINE);
@@ -270,7 +275,13 @@ token_t* lexer_next_token(lexer_t* lexer){
         case ';': return lexer_advance_current(lexer, TOKEN_SEMI);
         case '.': return lexer_advance_current(lexer, TOKEN_PUNTO);
         case '\0': break;
-        default: printf("No se esperaba este caracter: %c\n", lexer->c); exit(1); break;
+        case '\n': ++linea_actual ; return lexer_advance_current(lexer, TOKEN_NEW_LINE);
+        case ' ': 
+            //return lexer_advance_current(lexer, TOKEN_SPACE);
+            lexer->c = lexer->src[++lexer->i];
+            //printf("(%hhu), (%c), linea: %"PRIu64"\n", lexer->c, lexer->c, linea_actual);
+            goto volver;
+        default: printf("No se esperaba este caracter: (%hhu), (%c), linea: %"PRIu64"\n", lexer->c, lexer->c, linea_actual); exit(1); break;
         }
     }
 

@@ -127,6 +127,8 @@ typedef struct  AST_STRUCT
         AST_END,                 // final del ast
         AST_FUNC_ETIQUETA,       // para etiquetas como _start
         AST_FUNC,                // para funciones
+        AST_ENTRY_POINT,         // para macros entry point
+        AST_WORD_SIZE,           // establece un size word
     } type;
     list_c *children;
     char* name;

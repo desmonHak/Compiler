@@ -36,9 +36,14 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
+
+// lleva un conteo de la linea actual en la que se situa
+static uint64_t linea_actual = 0;
 
 typedef struct TOKEN_STRING {
     unsigned char* value;
+    uint64_t line;
     enum {
         TOKEN_ID,
         TOKKEN_MACRO_SYSCALL, // para macros %/# syscall
@@ -64,6 +69,10 @@ typedef struct TOKEN_STRING {
         TOKEN_STRING_SIMPLE,  // para strings con comillas simples
         TOKEN_STRING_DOBLE,   // para strings con comillas dobles
         TOKEN_DOC_STRING,     // para doc string's (documentar)
+        TOKKEN_MACRO_ENTRY_POINT, // define el punto de entrada
+        TOKEN_SPACE, // para los espacios
+        TOKEN_NEW_LINE, // para los saltos de linea
+        TOKKEN_MACRO_WORD_SIZE, // define el size word de la arquitectura objetivo
     } type;
 } token_t;
 

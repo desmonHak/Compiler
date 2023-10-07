@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include <inttypes.h>
 typedef enum ANSIColors
 {
     ANSI_BLACK = 0,

@@ -69,6 +69,8 @@ void compile_file(name_file name_file_open){
 
     printf("El archivo(%s)\n", name_file_open);
     unsigned char text[] = 
+        "%entry_point _start\n"
+        "%word_size 32"
         "_start:" 
         "#syscall[ \
             eax = 1, \
@@ -83,6 +85,12 @@ void compile_file(name_file name_file_open){
         "var = 20"
         "uint8_t variable = 10"
         ;
+
+    /*
+    implementar un call para llamar a funciones con stdcall o fastcall
+    cambiar punto de entrada a Start
+    gcc -shared -fPIC -e Start output.obj -o output.exe
+    */
 
     #include "crypt/md5.h"
     unsigned char hash[16];

@@ -39,6 +39,7 @@ token_t* init_token(unsigned char* value, unsigned short type){
     token_t * my_token = (token_t *)calloc(1, sizeof(token_t));
     my_token->type = type;
     my_token->value = value;
+    my_token->line = linea_actual;
     return my_token;
 }
 
@@ -92,7 +93,14 @@ static const char* token_type_to_str(unsigned int type){
             return "TOKEN_STRING_DOBLE";
         case TOKEN_DOC_STRING:
             return "TOKEN_DOC_STRING";
-        
+        case TOKKEN_MACRO_ENTRY_POINT:
+            return "TOKKEN_MACRO_ENTRY_POINT";
+        case TOKEN_SPACE:
+            return "TOKEN_SPACE";
+        case TOKEN_NEW_LINE:
+            return "TOKEN_NEW_LINE";
+        case TOKKEN_MACRO_WORD_SIZE:
+            return "TOKKEN_MACRO_WORD_SIZE";
         default:
             printf("Este token no exite"); break;
     }
@@ -102,9 +110,13 @@ static const char* token_type_to_str(unsigned int type){
 
 char* token_to_str(token_t* token){
     const char* type_str = token_type_to_str(token->type);
-    const char template[] = "<type=%s, \tint_type=%d, \tvalue=%s>";
+    char template[59];
+    if (token->value[0] != '\0' && token->value[0] != '\n' && token->value[0] != '\r') 
+        strcpy(template, "<type=%s, \tint_type=%d, \tvalue=%s, line=%"PRIu64">");
+    else 
+        strcpy(template, "<type=%s, \tint_type=%d, \tvalue=not printeable, line=%"PRIu64">");
     char* str = (char*)calloc(strlen(type_str) + (sizeof(template) / sizeof(const char) + 8), sizeof(char));
-    sprintf(str, template, type_str, token->type, token->value);
+    sprintf(str, template, type_str, token->type, token->value, token->line);
     return str;
 
 }

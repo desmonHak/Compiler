@@ -107,5 +107,4 @@ C:.
         codigo.bh
         compiler.exe
         output.asm
-        output.bin
         

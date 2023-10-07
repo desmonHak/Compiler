@@ -57,7 +57,6 @@ unsigned char* format_intrucion(unsigned char* format, ...){
     size_t size = (vsnprintf(NULL, 0, format, args) + 1) * sizeof(unsigned char);
     debug_malloc(unsigned char, instrucciones, sizeof(unsigned char) * size);
     vsprintf(instrucciones, format, args);
-
     va_end(args);
     return instrucciones;
 }
@@ -95,7 +94,7 @@ void asm_syscall(ast_t* node, list_c* list, size_t is_last){
 	);
     #endif
 
-    unsigned char* instrucciones;
+    unsigned char* instrucciones = NULL;
 
     //printf("Syscall(%s)\n", node->name);
     //printf("pointer regs -> %p, size list: %lld\n", node->data_almacenada.regs, node->data_almacenada.nombre_valor->size);
@@ -124,8 +123,8 @@ void asm_syscall(ast_t* node, list_c* list, size_t is_last){
                     debug_malloc(unsigned char, instrucciones, sizeof(unsigned char) * size);
                     sprintf(instrucciones, ASM_MOV("%s", "%u"), values->name, values->value.val32);
                     */
-                    instrucciones = format_intrucion("%s"ASM_MOV("%s", "%llu"), tab, values->name, values->value.val64);
-                    // printf("[%d] %s = %u\n",i, values->name, values->value.val32);
+                    instrucciones = format_intrucion("%s"ASM_MOV("%s", "%"SCNu32), tab, values->name, values->value.val32);
+                    // printf("[%d] %s = %"SCNu32"\n",i, values->name, values->value.val32);
                     break;
                 case 16:
                     /*
@@ -133,7 +132,7 @@ void asm_syscall(ast_t* node, list_c* list, size_t is_last){
                     debug_malloc(unsigned char, instrucciones, sizeof(unsigned char) * size);
                     sprintf(instrucciones, ASM_MOV("%s", "%hu"), values->name, values->value.val16);
                     */
-                    instrucciones = format_intrucion("%s"ASM_MOV("%s", "%llu"), tab, values->name, values->value.val64);
+                    instrucciones = format_intrucion("%s"ASM_MOV("%s", "%u"), tab, values->name, values->value.val16);
                     // printf("[%d] %s = %hu\n",i, values->name, values->value.val16);
                     break;
                 default:
@@ -223,7 +222,7 @@ void convert_string_to_push_reverse(list_c* list, size_t frame, name_value *valu
         stringToHex(value_str, cadenaHex); // convertir el string de caracteres, a un string con su representacion hex
         if (i+size_word > size_str){
             if( size_str - i == 1) {
-                instrucciones = format_intrucion("%s"ASM_MOV("byte  [BASE_STACk-0x%x]", "0x%s ; %s =  %s"), tab, i, cadenaHex, value->name, value->value);
+                instrucciones = format_intrucion("%s"ASM_MOV("byte  [BASE_STACk-0x%x]", "0x%s ; %s = n %s"), tab, i, cadenaHex, value->name, value->value);
             } else if( size_str - i == 2){
                 instrucciones = format_intrucion("%s"ASM_MOV("word  [BASE_STACk-0x%x]", "0x%s ; %s =  %s"), tab, i, cadenaHex, value->name, value->value);
             } else if( size_str - i <= 4){
@@ -276,7 +275,7 @@ void asm_var_create(ast_t* node, list_c* list, size_t is_last){
             case valor_8bits:
                 printf("<8@%hhu>\n", var->value.val8);
                 stack_frame.total_size_stack_frame += 1; // 1byte
-                instrucciones = format_intrucion("%s"ASM_MOV("byte  [BASE_STACk-0x%x]", "%llu ; %s"), tab, stack_frame.total_size_stack_frame, var->value.val8, var->name);
+                instrucciones = format_intrucion("%s"ASM_MOV("byte  [BASE_STACk-0x%x]%"PRIu64, " ; %s"), tab, stack_frame.total_size_stack_frame, var->value.val8, var->name);
                 break;
             case valor_16bits:
                 printf("<16@%hu>\n", var->value.val16);
@@ -284,14 +283,14 @@ void asm_var_create(ast_t* node, list_c* list, size_t is_last){
                 instrucciones = format_intrucion("%s"ASM_MOV("word  [BASE_STACk-0x%x]", "%u ; %s"), tab, stack_frame.total_size_stack_frame, var->value.val16, var->name);
                 break;
             case valor_32bits:
-                printf("<32@%u>\n", var->value.val32);
+                printf("<32@%"SCNu32">\n", var->value.val32);
                 stack_frame.total_size_stack_frame += 4; // 4byte
-                instrucciones = format_intrucion("%s"ASM_MOV("dword [BASE_STACk-0x%x]", "%u  ; %s"), tab, stack_frame.total_size_stack_frame, var->value.val32, var->name);
+                instrucciones = format_intrucion("%s"ASM_MOV("dword [BASE_STACk-0x%x]", "%"SCNu32"  ; %s"), tab, stack_frame.total_size_stack_frame, var->value.val32, var->name);
                 break;
             case valor_64bits:
-                printf("<64@%llu>\n", var->value.val64);
+                printf("<64@%"PRIu64">\n", var->value.val64);
                 stack_frame.total_size_stack_frame += 8; // 8byte
-                instrucciones = format_intrucion("%s"ASM_MOV("qword [BASE_STACk-0x%x]", "%llu ; %s"), tab, stack_frame.total_size_stack_frame, var->value.val64, var->name);
+                instrucciones = format_intrucion("%s"ASM_MOV("qword [BASE_STACk-0x%x]%"PRIu64, " ; %s"), tab, stack_frame.total_size_stack_frame, var->value.val64, var->name);
                 break;
             case valor_puntero_generico:
                 printf("<pointer@%p>\n", var->value.pointer);
@@ -304,13 +303,44 @@ void asm_var_create(ast_t* node, list_c* list, size_t is_last){
                 printf("<string@'%s'>\n", var->value.string);
                 break;
             default:
-                printf("Unknown Node Type(%d)\n", node->type);
+                printf(__FILE__ " Type data(%d)\n", node->type);
                 break;
             }
         }
     // si se creo unanueva instruccion añadirlo
     if (instrucciones != NULL) list_push(list, instrucciones);
 }
+
+void asm_set_entry_point(ast_t* node, list_c* list, size_t is_last){
+    #ifdef DEBUG_ENABLE
+        DEBUG_PRINT(DEBUG_LEVEL_INFO, \
+            INIT_TYPE_FUNC_DBG(list_c*, asm_set_entry_point) \
+            TYPE_DATA_DBG(ast_t*, "node = %p") \
+            TYPE_DATA_DBG(list_c*, "list = %p") \
+            TYPE_DATA_DBG(size_t, "is_last = %zu") \
+            END_TYPE_FUNC_DBG, node, list, is_last \
+        );
+    #endif
+    entry_point = (node->name);
+    unsigned char* instrucciones = format_intrucion("%s"ASM_DEFINE("ENTRY_POINT", "%s"), tab, entry_point);
+    list_push(list, instrucciones);
+}
+
+void asm_set_word_size(ast_t* node, list_c* list, size_t is_last){
+    #ifdef DEBUG_ENABLE
+        DEBUG_PRINT(DEBUG_LEVEL_INFO, \
+            INIT_TYPE_FUNC_DBG(list_c*, asm_set_word_size) \
+            TYPE_DATA_DBG(ast_t*, "node = %p") \
+            TYPE_DATA_DBG(list_c*, "list = %p") \
+            TYPE_DATA_DBG(size_t, "is_last = %zu") \
+            END_TYPE_FUNC_DBG, node, list, is_last \
+        );
+    #endif
+    entry_point = (node->name);
+    unsigned char* instrucciones = format_intrucion("%s"ASM_DEFINE("COMPILER_WORD_ARCh", "%hhu"), tab, compiler_word_arch);
+    list_push(list, instrucciones);
+}
+
 
 list_c* get_list_assembly(ast_t* node, list_c* list, size_t is_last){
     #ifdef DEBUG_ENABLE
@@ -327,6 +357,7 @@ list_c* get_list_assembly(ast_t* node, list_c* list, size_t is_last){
     }
 
     switch (node->type) {
+        case AST_NOOP: break;
         case AST_VAR:
             asm_var_create(node, list, is_last);
             break;
@@ -342,9 +373,16 @@ list_c* get_list_assembly(ast_t* node, list_c* list, size_t is_last){
         case AST_SYSCALL:
             asm_syscall(node, list, is_last);
             break;
-        // Agrega más casos según sea necesario para otros tipos de nodos
+        case AST_ENTRY_POINT:
+            asm_set_entry_point(node, list, is_last);
+            break;
+        case AST_WORD_SIZE:
+            asm_set_word_size(node, list, is_last);
+            break;
         default:
-            printf("Unknown Node Type\n");
+            printf(__FILE__" Unknown Node Type: %i\n", node->type);
+            print_ast(node);
+            exit(1);
     }
 
 

@@ -32,6 +32,7 @@
 
 %if   __BITS__ == 64
 [BITS 64]
+default rel ; solo si es windows
 
 %elif __BITS__ == 32
 [BITS 32]
