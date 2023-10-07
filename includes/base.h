@@ -56,7 +56,6 @@
 #include <sys/stat.h>
 #endif
 
-
 #if defined(__x86_64__) /* 64 bit detected */
 static unsigned  char compiler_word_arch = 64;
 #elif defined(__i386__) /* 32 bit x86 detected */
@@ -74,8 +73,6 @@ static unsigned char* entry_point = NULL;
 #include "compiler.h"
 
 #include "lang.h"
-
-
 
 #define INIT_TYPE_FUNC_DBG(type_return, name_func) "#{FG:lred} "#type_return" #{FG:cyan}"#name_func"#{FG:white}("
 #define TYPE_DATA_DBG(type_data, name_arg) " #{FG:lyellow}"#type_data" #{FG:white} "name_arg", "

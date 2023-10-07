@@ -63,4 +63,9 @@ void list_push(list_c* list, void* item){
     }
 }
 
+void* free_list(list_c* item_size){
+    free(item_size);
+    return NULL;
+}
+
 #endif

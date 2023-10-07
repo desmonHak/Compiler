@@ -107,4 +107,6 @@ C:.
         codigo.bh
         compiler.exe
         output.asm
+        output.exe
+        output.obj
         

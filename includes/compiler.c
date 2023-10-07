@@ -70,7 +70,7 @@ void compile_file(name_file name_file_open){
     printf("El archivo(%s)\n", name_file_open);
     unsigned char text[] = 
         "%entry_point _start\n"
-        "%word_size 32"
+        "%word_size 64"
         "_start:" 
         "#syscall[ \
             eax = 1, \
@@ -81,7 +81,7 @@ void compile_file(name_file name_file_open){
         "_new:"
         "#syscall(1,2,3, )" 
         "%syscall(32,333,35)"
-        "var = 'hola mundo'"
+        "var = 'holaaaaaaa mundo\\0'"
         "var = 20"
         "uint8_t variable = 10"
         ;

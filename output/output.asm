@@ -1,25 +1,71 @@
-default rel         ; configura el ensamblador para que utilice la dirección de memoria relativa al puntero de instrucción (RIP). En el modelo x64, el uso de direcciones relativas al puntero de instrucción es común y facilita la portabilidad del código.
+default rel         ; Use RIP-relative addressing like [rel msg] by default
 global WinMain
 extern ExitProcess  ; external functions in system libraries 
 extern MessageBoxA
 
-section .data 
-title:  db 'Win64', 0
-msg:    db 'Hello world!', 0
+; nasm -f win64 output.asm
+; gcc output.obj -o output.exe -nostartfiles -luser32 -lgdi32 -luser32
 
 section .text
 WinMain:
-	; sub rsp, 28h: Esta instrucción sustrae 40 bytes (28h en hexadecimal) del valor actual de rsp. Esto se hace para reservar espacio en la pila antes de llamar a MessageBoxA. En la convención x64 de Windows, se requiere que la pila esté alineada a múltiplos de 16 bytes antes de realizar una llamada a función.
-    sub rsp, 28h      ; Este espacio es utilizado para almacenar los primeros cuatro argumentos de la función si es necesario y asegura que la pila esté alineada correctamente antes de la llamada.
+    push rbp
+    mov rbp, rsp
+    and rsp, 0fffffffffffffff0h ;make sure stack 16-byte aligned   
+    ;mov eax, 'hola'
+    ;mov dword  [rbp-0x0], eax ; var =  hola mundo\0
+    ;mov rax, ' mundo\0'
+    ;mov qword  [rbp-0x8], rax ; var = hola mundo\0
+
+    jmp salt
+    mssg:    db 'Hello world!', 0
+    salt:
+
+    ;mov dword [rsp], 0x43414341
+    ;mov dword [rsp + 4], 0x004241
+
+    ;mov dword [rsp + 8], 0x43414341
+    ;mov dword [rsp + 12], 0x004241
+
+    ;sub rsp, 0x10 ; make some room on the stack
+    ;mov dword [rbp - 8],0x41424142
+    ;mov dword [rbp - 12], 0x00434143 
+    ;mov rax, 0x0043414341424142
+    ;mov  [rbp ], rax
+    ;mov dword [rbp ],0x41424142 ; poner rbp
+    ;mov dword [rbp + 4], 0x00434143 
+    
+    ;sub rsp, 16
+    ;mov rax, 0x0042414243434343
+    ;mov [rbp -8], rax
+    ;mov rax, 0x4142414243434343
+    ;mov qword [rbp -16], rax 
+
+    sub rsp, 32
+    ;mov qword rax, 0x0000000000006f64
+    ;mov [rbp-8], rax ; var = hola mundo\0
+    ;mov rax, 0x6e756d20616c6f68
+    ;mov qword [rbp-16],  rax ; var =  hola mundo\0
+    ;mov dword rax, 0x00006f64
+
+    %define BASE_STACk rbp
+                mov byte  [BASE_STACk-0x2], 0x00 ; var = n holaaaaaaa mundo\0
+                mov rax, 0x6f646e756d206161 ; var =  holaaaaaaa mundo\0
+                mov   [BASE_STACk-0xa], RAX ; var =  holaaaaaaa mundo\0
+                mov rax, 0x61616161616c6f68 ; var =  holaaaaaaa mundo\0
+                mov   [BASE_STACk-0x12], RAX ; var =  holaaaaaaa mundo\0
+
+
+    ;sub rsp, 28h      ; reserve shadow space and make RSP%16 == 0
     mov rcx, 0       ; hWnd = HWND_DESKTOP
-    lea rdx,[msg]    ; LPCSTR lpText
-    lea r8,[title]   ; LPCSTR lpCaption
+    ;lea rdx,[rax]    ; LPCSTR lpText
+    lea rdx, [BASE_STACk-0x12]  
+    lea r8,[mssg]   ; LPCSTR lpCaption
     mov r9d, 0       ; uType = MB_OK
-    call MessageBoxA ; En sistemas Windows x64, la convención de llamada estándar es fastcall. Esto significa que los primeros cuatro argumentos se pasan a través de los registros RCX, RDX, R8, y R9. En tu código, estas instrucciones son utilizadas correctamente para pasar los argumentos a la función MessageBoxA.
+    call MessageBoxA
 
     mov  ecx,eax        ; exit status = return value of MessageBoxA
     call ExitProcess
 
-    add rsp, 28h       ; if you were going to ret, restore RSP
+    ;add rsp, 28h       ; if you were going to ret, restore RSP
 
     ret

@@ -151,7 +151,7 @@ endstruc
         push    ebp
         mov     ebp, esp
         sub     esp, 48 ; reserbar 40 bytes, + 8(de la direccion de retorno + el antiguo frame)
-                        ; variable local
+                        ; variable local, tiene que se un valor alineado sino da error
         mov     DWORD PTR [ebp-40], 1
         mov     DWORD PTR [ebp-36], 1
         mov     DWORD PTR [ebp-4], 1
