@@ -70,7 +70,7 @@ void compile_file(name_file name_file_open){
     printf("El archivo(%s)\n", name_file_open);
     unsigned char text[] = 
         "%entry_point _start\n"
-        "%word_size 64"
+        "%word_size 32"
         "_start:" 
         "#syscall[ \
             eax = 1, \
