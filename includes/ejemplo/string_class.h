@@ -29,60 +29,31 @@
  *	cambios realizados entre versiones, ni revelar porciones específicas de código 
  *	modificado.
  */
+#ifndef _STRING_H_
+#define _STRING_H_
 
-#ifndef __ERROR_C__
-#define __ERROR_C__
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
 
-#include "error_c.h"
+#include "colors.h"
+#include "class_c.h"
 
-void error_print(const Error *err)
-{
-    if (err == NULL) return;
-    const char *level_str;
-    switch (err->level_c)
-    {
-    case ERROR_LEVEL_INFO:
-        level_str = "Info";
-        break;
-    case ERROR_LEVEL_WARNING:
-        level_str = "Warning";
-        break;
-    case ERROR_LEVEL_ERROR:
-        level_str = "Error";
-        break;
-    default:
-        level_str = "Unknown";
-        break;
-    }
-    fprintf(stderr, "[%s] %s (%s:%d)\n", level_str, err->message, err->file, err->line);
-}
+typedef class_c String_c {
+    // metodos:
+    CreateMethod(void, exec, class_c String_c*);                                             // constructor = void ConstructorClass(String_c)(String_c *my_string)
+    CreateMethod(uint64_t, getSize, class_c String_c*);                                      // uint64_t getSize(string_c* my_string)
+    CreateMethod(unsigned char*, setStr, class_c String_c*, const unsigned char*, uint64_t); // unsigned char* setStr(String_c *my_string, const unsigned char* string_c, uint64_t size_copy)
+    CreateMethod(unsigned char*, getStr, class_c String_c*);                                 // unsigned char* getStr(String_c *my_string)
+    CreateMethod(void, printStr, class_c String_c*, const char *, ...);                      // void printStr(String_c *my_string, const char *format, ...)
+    CreateMethod(uint64_t, searchChar, class_c String_c*, unsigned char);                    // uint64_t searchChar(String_c *my_string, unsigned char chartter)
+    // atributos:
+    CreateAtribute(unsigned char*, str);
+    CreateAtribute(uint64_t, size);
+} String_c;
 
-void error_log(const Error *err)
-{
-    if (err == NULL) return;
-    FILE *file = fopen(ERROR_LOG_FILE, "a");
-    if (file != NULL)
-    {
-        const char *level_str;
-        switch (err->level_c)
-        {
-        case ERROR_LEVEL_INFO:
-            level_str = "Info";
-            break;
-        case ERROR_LEVEL_WARNING:
-            level_str = "Warning";
-            break;
-        case ERROR_LEVEL_ERROR:
-            level_str = "Error";
-            break;
-        default:
-            level_str = "Unknown";
-            break;
-        }
-        fprintf(file, "[%s] %s (%s:%d)\n", level_str, err->message, err->file, err->line);
-        fclose(file);
-    }
-}
+uint64_t getSize(String_c* my_string);
 
-
+#include "string_class.c"
 #endif

@@ -1,55 +1,143 @@
-/*
- *	Licencia Apache, Versión 2.0 con Modificación
- *	
- *	Copyright 2023 Desmon (David)
- *	
- *	Se concede permiso, de forma gratuita, a cualquier persona que obtenga una copia de 
- *	este software y archivos de documentación asociados (el "Software"), para tratar el 
- *	Software sin restricciones, incluidos, entre otros, los derechos de uso, copia, 
- *	modificación, fusión, publicación, distribución, sublicencia y/o venta de copias del 
- *	Software, y para permitir a las personas a quienes se les proporcione el Software 
- *	hacer lo mismo, sujeto a las siguientes condiciones:
- *	
- *	El anterior aviso de copyright y este aviso de permiso se incluirán en todas las 
- *	copias o partes sustanciales del Software.
- *	
- *	EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O 
- *	IMPLÍCITA, INCLUYENDO PERO NO LIMITADO A LAS GARANTÍAS DE COMERCIABILIDAD, IDONEIDAD 
- *	PARA UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN. EN NINGÚN CASO LOS TITULARES DEL 
- *	COPYRIGHT O LOS TITULARES DE LOS DERECHOS DE AUTOR SERÁN RESPONSABLES DE NINGÚN 
- *	RECLAMO, DAÑO U OTRA RESPONSABILIDAD, YA SEA EN UNA ACCIÓN DE CONTRATO, AGRAVIO O DE 
- *	OTRA MANERA, QUE SURJA DE, FUERA DE O EN CONEXIÓN CON EL SOFTWARE O EL USO U OTRO TIPO
- *	DE ACCIONES EN EL SOFTWARE.
- *	
- *	Además, cualquier modificación realizada por terceros se considerará propiedad del 
- *	titular original de los derechos de autor. Los titulares de derechos de autor 
- *	originales no se responsabilizan de las modificaciones realizadas por terceros.
- *	
- *	Queda explícitamente establecido que no es obligatorio especificar ni notificar los 
- *	cambios realizados entre versiones, ni revelar porciones específicas de código 
- *	modificado.
- */
+#ifndef __HASH_TABLE1_H__
+#define __HASH_TABLE1_H__
+
 #include <stdio.h>
-
-#define DEBUG_ENABLE
-
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
+#include "../debug_c.h"
+#include "list.h"
+#include "hash-table.h"
 #include "list.h"
 
-int main(){
+// Define una estructura que incluye una lista enlazada y una tabla de hash.
+typedef struct {
+    List* list;
+    size_t capacity;
+    Entry** table;
+} HashList;
 
-    list_c* mi_lista = init_list(sizeof(uint64_t));
+// Funciones para manipular la estructura combinada.
+HashList* createHashList(size_t size);
+void putInList(HashList* hashList, void* value);
+void putInHash(HashList* hashList, const char* key, void* value);
+void* getByHash(HashList* hashList, const char* key);
+void printHashList(HashList* hashList);
+void freeHashList(HashList* hashList);
 
-    for ( unsigned char i = 0; i < 2048; i++){
-        uint64_t* number = (uint64_t*)calloc(1, sizeof(uint64_t));
-        *number = i;
-        printf("1> %lld %p\n", *number, number);
-        list_push(mi_lista, number);
-        //printf("2> %lld\n", *number);
+#endif
+
+
+HashList* createHashList(size_t size) {
+    HashList* hashList = (HashList*)malloc(sizeof(HashList));
+    if (hashList == NULL) {
+        // Manejo de error
+        exit(EXIT_FAILURE);
     }
 
-    for ( unsigned char i = 0; i < 2048; i++){
-        //printf("> %lld\n", *((uint64_t*)list_get_element(mi_lista, i)));
+    hashList->list = createList();
+    hashList->capacity = size;
+
+    debug_calloc(Entry*, hashList->table, size, sizeof(Entry*));
+
+    return hashList;
+}
+
+void putInList(HashList* hashList, void* value) {
+    push(hashList->list, value);
+}
+
+void putInHash(HashList* hashList, const char* key, void* value) {
+    size_t index = hash(key, hashList->capacity);
+
+    Entry* entry = (Entry*)malloc(sizeof(Entry));
+    if (entry == NULL) {
+        // Manejo de error
+        exit(EXIT_FAILURE);
     }
+
+    entry->key = strdup(key);
+    entry->value = value;
+    entry->next = hashList->table[index];
+
+    hashList->table[index] = entry;
+}
+
+void* getByHash(HashList* hashList, const char* key) {
+    size_t index = hash(key, hashList->capacity);
+
+    Entry* entry = hashList->table[index];
+    while (entry != NULL) {
+        if (strcmp(entry->key, key) == 0) {
+            return entry->value;
+        }
+        entry = entry->next;
+    }
+
+    return NULL; // Clave no encontrada
+}
+
+void printHashList(HashList* hashList) {
+    printf("Lista:\n");
+    printList(hashList->list);
+
+    printf("Tabla de Hash:\n");
+    for (size_t i = 0; i < hashList->capacity; i++) {
+        Entry* entry = hashList->table[i];
+        while (entry != NULL) {
+            printf("Key: %s, PTR Value: 0x%p\n", entry->key, entry->value);
+            entry = entry->next;
+        }
+    }
+}
+
+void freeHashList(HashList* hashList) {
+    freeList(hashList->list);
+
+    for (size_t i = 0; i < hashList->capacity; i++) {
+        Entry* entry = hashList->table[i];
+        while (entry != NULL) {
+            Entry* temp = entry;
+            entry = entry->next;
+            free(temp->key);
+            free(temp);
+        }
+    }
+
+    free(hashList->table);
+    free(hashList);
+}
+#include <stdio.h>
+#include <stdlib.h>
+
+
+int main() {
+    // Crear una estructura HashList
+    HashList* hashList = createHashList(10);
+
+    // Agregar elementos a la lista
+    putInList(hashList, (void*)123);
+    putInList(hashList, (void*)1);
+    putInList(hashList, (void*)13);
+
+    // Agregar elementos a la tabla de hash
+    putInHash(hashList, "key1", (void*)123);
+
+    // Obtener un valor de la tabla de hash por clave
+    const char* searchKey = "key1";
+    void* foundValue = getByHash(hashList, searchKey);
+    if (foundValue != NULL) {
+        printf("Valor encontrado para clave '%s': 0x%p\n", searchKey, foundValue);
+    } else {
+        printf("Clave '%s' no encontrada.\n", searchKey);
+    }
+
+    // Imprimir la estructura combinada
+    printHashList(hashList);
+
+    // Liberar memoria
+    freeHashList(hashList);
 
     return 0;
 }

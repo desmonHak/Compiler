@@ -41,6 +41,7 @@ void compile(char *src, Size_file src_size){
     print_tokents(init_lexer(src, src_size));
     ast_t*      root  = parser_parser(parser);  
     print_ast(root);
+    
     print_list_assembly(convert_assembly(root));
 }
 void compile_file(name_file name_file_open){
@@ -84,6 +85,8 @@ void compile_file(name_file name_file_open){
         "var = 'holaaaaaaa mundo\\0'"
         "var = 20"
         "uint8_t variable = 10"
+        "uint32_t variable = 20"
+        "uint32_t valor = 30"
         ;
 
     /*

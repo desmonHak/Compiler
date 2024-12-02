@@ -193,5 +193,6 @@
             "binaryPath": "c:\\Users\\mariana\\3D Objects\\Desmon\\Compiler-BH\\output\\compiler.exe",
             "binaryArgs": []
         }
-    ]
+    ],
+    "C_Cpp.default.compilerPath": "C:\\Tools\\bin\\gcc.exe"
 }

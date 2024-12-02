@@ -1,12 +1,14 @@
-Listado de rutas de carpetas para el volumen Windows
-El n£mero de serie del volumen es 779BADE0 56AF:0D29
+Listado de rutas de carpetas
+El n£mero de serie del volumen es 001CF548 EC9A:9B63
 C:.
 |   .gitignore
+|   .gitmodules
 |   LICENSE.md
 |   Makefile
 |   README.md
 |   tree_files.txt
 |   
++---.dist
 +---.vscode
 |       c_cpp_properties.json
 |       settings.json
@@ -20,20 +22,11 @@ C:.
 |   |   codigo.bh
 |   |   compiler.c
 |   |   compiler.h
-|   |   debug_c.c
-|   |   debug_c.h
-|   |   error_c.c
-|   |   error_c.h
 |   |   lang.h
 |   |   main.c
 |   |   
+|   +---.dist
 |   +---arm
-|   +---colors-C-C-plus-plus
-|   |       .gitignore
-|   |       colors.c
-|   |       colors.h
-|   |       LICENSE
-|   |       
 |   +---crypt
 |   |       md4.c
 |   |       md4.h
@@ -43,6 +36,16 @@ C:.
 |   |       sha256.c
 |   |       sha256.h
 |   |       
+|   +---ejemplo
+|   |   |   class_c.h
+|   |   |   code.c
+|   |   |   code.exe
+|   |   |   colors.c
+|   |   |   colors.h
+|   |   |   string_class.c
+|   |   |   string_class.h
+|   |   |   
+|   |   \---.dist
 |   +---sintaxis
 |   |       ast.c
 |   |       ast.h
@@ -56,13 +59,77 @@ C:.
 |   |       types.h
 |   |       
 |   +---structs_data
+|   |       hash-table.c
+|   |       hash-table.h
 |   |       list.c
 |   |       list.h
 |   |       list_demo.c
 |   |       pruebas.c
+|   |       pruebas.exe
 |   |       strings.c
 |   |       strings.h
 |   |       
+|   +---structs_data_C
+|   |   |   .gitignore
+|   |   |   .gitmodules
+|   |   |   array-list.c
+|   |   |   array-list.h
+|   |   |   array-list.md
+|   |   |   hash-table.c
+|   |   |   hash-table.h
+|   |   |   hash-table.md
+|   |   |   LICENSE.md
+|   |   |   Makefile
+|   |   |   matriz-list.c
+|   |   |   matriz-list.h
+|   |   |   matriz-list.md
+|   |   |   README.md
+|   |   |   vector-list.c
+|   |   |   vector-list.h
+|   |   |   vector-list.md
+|   |   |   
+|   |   +---DebugLibC
+|   |   |   |   .gitignore
+|   |   |   |   .gitmodules
+|   |   |   |   debug_c.c
+|   |   |   |   debug_c.h
+|   |   |   |   error_c.c
+|   |   |   |   error_c.h
+|   |   |   |   hash.c
+|   |   |   |   image.png
+|   |   |   |   LICENSE.md
+|   |   |   |   README.md
+|   |   |   |   time_code.c
+|   |   |   |   time_code.h
+|   |   |   |   
+|   |   |   \---colors-C-C-plus-plus
+|   |   |       |   .gitignore
+|   |   |       |   colors.c
+|   |   |       |   colors.h
+|   |   |       |   example.c
+|   |   |       |   imagen.png
+|   |   |       |   imagen1.png
+|   |   |       |   LICENSE.md
+|   |   |       |   README.md
+|   |   |       |   
+|   |   |       \---.vscode
+|   |   |               c_cpp_properties.json
+|   |   |               launch.json
+|   |   |               settings.json
+|   |   |               
+|   |   +---examples
+|   |   |       code-array-list_vector-list.c
+|   |   |       code_array-list.c
+|   |   |       code_hash-table.c
+|   |   |       code_matriz-list.c
+|   |   |       code_vector-list.c
+|   |   |       
+|   |   \---img
+|   |           array-list.png
+|   |           array-list_vector-list.png
+|   |           hash-table.png
+|   |           vector-list.png
+|   |           
 |   +---WL_lib
 |   |       README.md
 |   |       WL_lib.c
@@ -88,6 +155,7 @@ C:.
 |               main.asm
 |               
 +---lib_native_nasm
+|   +---.dist
 |   +---arm
 |   \---x86
 |       |   base.asm

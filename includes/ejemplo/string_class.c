@@ -31,7 +31,7 @@
  */
 #ifndef _STRING_C_
 #define _STRING_C_
-#include "strings.h"
+#include "string_class.h"
 
 uint64_t getSize(String_c* my_string){
     return my_string->size;
@@ -108,6 +108,7 @@ uint64_t searchChar(String_c *my_string, unsigned char chartter){
     return _searchCharNotStr(my_string->getStr(my_string), 0, my_string->getSize(my_string), chartter);
 }
 
+#define NewObject_String_c(NameObject) NewObjet(String_c, NameObject); NameObject.exec(&NameObject)
 void ConstructorClass(String_c)(String_c *my_string){
     // atributos:
     my_string->size = 0;

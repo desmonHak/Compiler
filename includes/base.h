@@ -68,7 +68,7 @@ static unsigned char* entry_point = NULL;
 
 
 
-#include "colors-C-C-plus-plus/colors.h"
+#include "./structs_data_C/DebugLibC/colors-C-C-plus-plus/colors.h"
 #include "structs_data/strings.h"
 #include "compiler.h"
 

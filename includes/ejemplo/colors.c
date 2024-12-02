@@ -39,7 +39,7 @@ void generate_three_values(
     unsigned int n4, unsigned int n5, unsigned int n6)
 {
     // si es 0 o menor o igual que 255
-    if (x || x <= 255)
+    if ((x == 0) || (x >= 255))
     {
         printf("El numero debe estar en el rango de 0 a 255.\n");
         return;
@@ -481,6 +481,8 @@ void up(const char *data, const unsigned char number)
 {
     printf(UP("%s", "%d"), number, data);
 }
+
+#ifndef __DISABLE_COLORS_FORE_BACK_GROUND__ 
 static inline void foreground_color_custom_RGB(RGB_C color)
 {
     foreground_color_custom_(color.r, color.g, color.b);
@@ -497,6 +499,24 @@ static void background_color_custom_(const unsigned char red, const unsigned cha
 {
     printf(BACKGROUND_COLOR_CUSTOM_RGB("%d", "%d", "%d"), red, green, blue);
 }
+#else
+static inline void background_color_custom_RGB(RGB_C color)
+{
+    return; // no comptible para win7
+}
+static void background_color_custom_(const unsigned char red, const unsigned char green, const unsigned char blue)
+{
+    return; // no comptible para win7
+}
+static inline void foreground_color_custom_RGB(RGB_C color)
+{
+    return; // no comptible para win7
+}
+static void foreground_color_custom_(const unsigned char red, const unsigned char green, const unsigned char blue)
+{
+    return; // no comptible para win7
+}
+#endif
 static inline void back_fore_color_custom_RGB(RGB_C colorBackGround, RGB_C colorForeGround)
 {
     back_fore_color_custom_(

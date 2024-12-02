@@ -56,5 +56,6 @@ typedef struct segoff segoff_t;
 #define ASM_INTERRUPCION_SYSCALL()  "syscall"
 #define ASM_PUSH(operator_size, value) "push " operator_size " " value
 #define ASM_DEFINE(name_define, value) "%%define " name_define " " value
+#define ASM_SUB(source, destino) "sub " source ", " destino
 
 #endif

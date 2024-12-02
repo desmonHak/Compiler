@@ -14,7 +14,7 @@
             "cStandard": "c17",
             "cppStandard": "gnu++14",
             "intelliSenseMode": "windows-gcc-x64",
-            "compilerPath": "C:\\TDM-GCC-64\\bin\\gcc.exe"
+            "compilerPath": "C:\\Tools\\bin\\gcc.exe"
         }
     ],
     "version": 4

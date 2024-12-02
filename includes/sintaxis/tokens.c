@@ -111,7 +111,7 @@ static const char* token_type_to_str(unsigned int type){
 char* token_to_str(token_t* token){
     const char* type_str = token_type_to_str(token->type);
     char template[59];
-    if (token->value[0] != '\0' && token->value[0] != '\n' && token->value[0] != '\r') 
+    if (token->value != NULL && token->value[0] != '\0' && token->value[0] != '\n' && token->value[0] != '\r') 
         strcpy(template, "<type=%s, \tint_type=%d, \tvalue=%s, line=%"PRIu64">");
     else 
         strcpy(template, "<type=%s, \tint_type=%d, \tvalue=not printeable, line=%"PRIu64">");

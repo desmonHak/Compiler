@@ -51,6 +51,8 @@ typedef class_c String_c {
     CreateAtribute(uint64_t, size);
 } String_c;
 
+#define NewObject_String_c(NameObject) NewObjet(String_c, NameObject); NameObject.exec(&NameObject)
+
 uint64_t getSize(String_c* my_string);
 
 #include "strings.c"
