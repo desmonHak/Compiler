@@ -1,5 +1,5 @@
 Listado de rutas de carpetas
-El n£mero de serie del volumen es 001CF548 EC9A:9B63
+El número de serie del volumen es 0065006C 8CDA:FEF3
 C:.
 |   .gitignore
 |   .gitmodules
@@ -8,7 +8,6 @@ C:.
 |   README.md
 |   tree_files.txt
 |   
-+---.dist
 +---.vscode
 |       c_cpp_properties.json
 |       settings.json
@@ -25,8 +24,6 @@ C:.
 |   |   lang.h
 |   |   main.c
 |   |   
-|   +---.dist
-|   +---arm
 |   +---crypt
 |   |       md4.c
 |   |       md4.h
@@ -37,15 +34,13 @@ C:.
 |   |       sha256.h
 |   |       
 |   +---ejemplo
-|   |   |   class_c.h
-|   |   |   code.c
-|   |   |   code.exe
-|   |   |   colors.c
-|   |   |   colors.h
-|   |   |   string_class.c
-|   |   |   string_class.h
-|   |   |   
-|   |   \---.dist
+|   |       class_c.h
+|   |       code.c
+|   |       colors.c
+|   |       colors.h
+|   |       string_class.c
+|   |       string_class.h
+|   |       
 |   +---sintaxis
 |   |       ast.c
 |   |       ast.h
@@ -65,7 +60,6 @@ C:.
 |   |       list.h
 |   |       list_demo.c
 |   |       pruebas.c
-|   |       pruebas.exe
 |   |       strings.c
 |   |       strings.h
 |   |       
@@ -155,8 +149,6 @@ C:.
 |               main.asm
 |               
 +---lib_native_nasm
-|   +---.dist
-|   +---arm
 |   \---x86
 |       |   base.asm
 |       |   linux32.asm
@@ -168,13 +160,11 @@ C:.
 |       \---allocator
 |               allocator_defines.asm
 |               allocator_heap.asm
-|               allocator_heap.exe
-|               allocator_heap.o
 |               
 \---output
         codigo.bh
         compiler.exe
+        desktop.ini
         output.asm
-        output.exe
         output.obj
         
