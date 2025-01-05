@@ -164,6 +164,7 @@ C:.
 \---output
         codigo.bh
         compiler.exe
+        compiler_debug.exe
         desktop.ini
         output.asm
         output.obj
